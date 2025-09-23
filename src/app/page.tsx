@@ -25,7 +25,7 @@ export default function Home({ searchParams }: { searchParams: { [key: string]: 
                 <a href="/upload" className="inline-flex items-center justify-center rounded-md border border-gray-300 px-5 py-3 text-gray-900 hover:bg-gray-50">Upload bank statements</a>
               </div>
               {subscribed && (
-                <div className="mt-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">Thanks! You're on the list. We'll be in touch shortly.</div>
+                <div className="mt-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">{"Thanks! You're on the list. We'll be in touch shortly."}</div>
               )}
             </div>
           </div>
