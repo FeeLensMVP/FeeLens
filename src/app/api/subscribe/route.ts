@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import fs from 'fs/promises';
+import path from 'path';
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,11 +11,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
     }
 
-    // Log the email for now (placeholder for persistence/ESP integration)
-    console.log(`[subscribe] New subscriber: ${email}`);
-
-    // In a real app, persist to your DB or ESP here.
-    // For now, no-op and redirect with a success flag.
+    // Save email to JSON file
+    const emailData = { 
+      email, 
+      timestamp: new Date().toISOString(),
+      id: Date.now().toString()
+    };
+    
+    const filePath = path.join(process.cwd(), 'subscribers.json');
+    
+    try {
+      // Read existing subscribers or create empty array
+      const existingData = await fs.readFile(filePath, 'utf8').catch(() => '[]');
+      const subscribers = JSON.parse(existingData);
+      
+      // Check if email already exists
+      const emailExists = subscribers.some((sub: any) => sub.email === email);
+      if (emailExists) {
+        return NextResponse.json({ error: "Email already subscribed" }, { status: 400 });
+      }
+      
+      // Add new subscriber
+      subscribers.push(emailData);
+      
+      // Save updated list
+      await fs.writeFile(filePath, JSON.stringify(subscribers, null, 2));
+      
+      console.log(`[subscribe] New subscriber saved: ${email}`);
+    } catch (err) {
+      console.error('[subscribe] Error saving subscriber:', err);
+      return NextResponse.json({ error: "Failed to save subscription" }, { status: 500 });
+    }
     const url = new URL(req.nextUrl);
     url.pathname = "/";
     url.searchParams.set("subscribed", "1");
