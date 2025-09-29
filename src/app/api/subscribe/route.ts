@@ -33,3 +33,36 @@ const resend = process.env.RESEND_API_KEY
     } else {
       console.log('[subscribe] Resend not configured - skipping email');
     }
+
+    // Store email in JSON file (fallback)
+    const fs = require('fs');
+    const path = require('path');
+    
+    try {
+      const subscribersPath = path.join(process.cwd(), 'subscribers.json');
+      let subscribers = [];
+      
+      if (fs.existsSync(subscribersPath)) {
+        const data = fs.readFileSync(subscribersPath, 'utf8');
+        subscribers = JSON.parse(data);
+      }
+      
+      // Check if email already exists
+      if (!subscribers.includes(email)) {
+        subscribers.push(email);
+        fs.writeFileSync(subscribersPath, JSON.stringify(subscribers, null, 2));
+        console.log('[subscribe] Email stored in subscribers.json');
+      } else {
+        console.log('[subscribe] Email already exists in subscribers.json');
+      }
+    } catch (error) {
+      console.error('[subscribe] Error storing email:', error);
+    }
+
+    return NextResponse.json({ message: "Successfully subscribed!" }, { status: 200 });
+    
+  } catch (error) {
+    console.error('[subscribe] Error:', error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
