@@ -45,11 +45,11 @@ export default function UploadPage() {
             audit@feelens.com
           </p>
           <p className="text-sm text-gray-600 mb-2">
-            Include in your email:
+            You can already request your bank to provide these documents:
           </p>
           <ul className="text-sm text-gray-600 text-left mb-6 space-y-1">
-            <li>• Bank fee analysis statements (CSV, PDF, EDI 822 or CAMT 086)</li>
-            <li>• Bank pricing agreement (CSV, PDF, EDI 822 or CAMT 086)</li>
+            <li>• Monthly fee analysis statement (CSV, PDF, EDI822 or CAMT086)</li>
+            <li>• Bank pricing agreement (CSV, PDF, EDI822 or CAMT086)</li>
             <li>• Subject: {formData.company}</li>
           </ul>
           <p className="text-sm text-gray-500 mb-6">
