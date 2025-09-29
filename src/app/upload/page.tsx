@@ -39,19 +39,15 @@ export default function UploadPage() {
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Request Received!</h2>
           <p className="text-gray-600 mb-4">
-            We will reach out to you shortly with instructions to email your bank documents to:
-          </p>
-          <p className="text-lg font-semibold text-indigo-600 mb-6">
-            audit@feelens.com
+            We will reach out to you shortly with instructions.
           </p>
           <p className="text-sm text-gray-600 mb-2">
-            You can already request your bank to provide these documents:
+            You can already request your bank to provide:
           </p>
           <ul className="text-sm text-gray-600 text-left mb-6 space-y-1">
-            <li>• Monthly fee analysis statement (CSV, PDF, EDI822 or CAMT086)</li>
-            <li>• Bank pricing agreement (CSV, PDF, EDI822 or CAMT086)</li>
-            <li>• Subject: {formData.company}</li>
-          </ul>
+            <li>• Monthly fee statement (CSV, PDF, EDI822 or CAMT086)</li>
+            <li>• Bank pricing agreement (CSV or PDF)</li>
+           </ul>
           <p className="text-sm text-gray-500 mb-6">
             Your audit will be ready in <strong>7 business days</strong>
           </p>
