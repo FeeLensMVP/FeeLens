@@ -42,7 +42,7 @@ export default function UploadPage() {
             Please email your bank documents to:
           </p>
           <p className="text-lg font-semibold text-indigo-600 mb-6">
-            audit@feelens.com
+            gonzalezclement23@gmail.com
           </p>
           <p className="text-sm text-gray-600 mb-2">
             Include in your email:
