@@ -1,4 +1,12 @@
-export async function POST(req: NextRequest) {
+import { NextRequest, NextResponse } from "next/server";
+import { Resend } from 'resend';
+
+// Only initialize Resend if API key exists
+const resend = process.env.RESEND_API_KEY 
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
+  
+  export async function POST(req: NextRequest) {
   console.log('[subscribe] Starting request');
   console.log('[subscribe] Resend configured:', !!resend);
   console.log('[subscribe] API key exists:', !!process.env.RESEND_API_KEY);
