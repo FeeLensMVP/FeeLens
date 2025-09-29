@@ -4,24 +4,26 @@ import { useState } from 'react';
 
 export default function UploadPage() {
   const [submitted, setSubmitted] = useState(false);
-  const [email, setEmail] = useState('');
+  const [formData, setFormData] = useState({ email: '', company: '' });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const formData = new FormData(form);
+    const data = new FormData(form);
 
-    // Submit to Formspree
     const response = await fetch('https://formspree.io/f/xnngpygq', {
       method: 'POST',
-      body: formData,
+      body: data,
       headers: {
         'Accept': 'application/json'
       }
     });
 
     if (response.ok) {
-      setEmail(formData.get('email') as string);
+      setFormData({
+        email: data.get('email') as string,
+        company: data.get('company') as string
+      });
       setSubmitted(true);
     }
   };
@@ -35,13 +37,23 @@ export default function UploadPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Files Received!</h2>
-          <p className="text-gray-600 mb-6">
-            Your bank fee audit will be ready in <strong>7 business days</strong>.
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Request Received!</h2>
+          <p className="text-gray-600 mb-4">
+            Please email your bank documents to:
           </p>
+          <p className="text-lg font-semibold text-indigo-600 mb-6">
+            audit@feelens.com
+          </p>
+          <p className="text-sm text-gray-600 mb-2">
+            Include in your email:
+          </p>
+          <ul className="text-sm text-gray-600 text-left mb-6 space-y-1">
+            <li>• Bank fee statement (CSV or PDF)</li>
+            <li>• Bank pricing sheet (CSV or PDF)</li>
+            <li>• Reference: {formData.company}</li>
+          </ul>
           <p className="text-sm text-gray-500 mb-6">
-            We'll email your detailed savings analysis to:<br />
-            <strong className="text-gray-900">{email}</strong>
+            Your audit will be ready in <strong>7 business days</strong>
           </p>
           <a 
             href="/"
@@ -58,9 +70,9 @@ export default function UploadPage() {
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Upload Bank Documents</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Request Bank Fee Audit</h1>
           <p className="mt-2 text-gray-600">
-            Get your bank fee audit in 7 business days
+            Get your analysis in 7 business days
           </p>
         </div>
 
@@ -92,43 +104,15 @@ export default function UploadPage() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Bank Fee Statement (CSV or PDF) *
-              </label>
-              <input
-                type="file"
-                name="statement"
-                required
-                accept=".csv,.pdf"
-                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-              />
-              <p className="mt-1 text-xs text-gray-500">CSV or PDF, max 10MB</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Bank Pricing Sheet (CSV or PDF) *
-              </label>
-              <input
-                type="file"
-                name="pricing"
-                required
-                accept=".csv,.pdf"
-                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-              />
-              <p className="mt-1 text-xs text-gray-500">CSV or PDF, max 10MB</p>
-            </div>
-
             <button
               type="submit"
               className="w-full rounded-md bg-indigo-600 px-6 py-3 text-white font-medium hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              Submit for Analysis
+              Request Audit
             </button>
 
             <p className="text-xs text-center text-gray-500">
-              Your data is secure and confidential. We'll email your audit results within 7 business days.
+              After submitting, you'll receive instructions to email your documents securely.
             </p>
           </form>
         </div>
