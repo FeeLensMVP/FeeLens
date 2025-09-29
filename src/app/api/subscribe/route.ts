@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from 'fs/promises';
-import path from 'path';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,45 +12,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
     }
 
-    // Save email to JSON file
-    const emailData = { 
-      email, 
-      timestamp: new Date().toISOString(),
-      id: Date.now().toString()
-    };
-    
-    const filePath = path.join(process.cwd(), 'subscribers.json');
-    
-    try {
-      // Read existing subscribers or create empty array
-      const existingData = await fs.readFile(filePath, 'utf8').catch(() => '[]');
-      const subscribers = JSON.parse(existingData);
-      
-      // Check if email already exists
-      const emailExists = subscribers.some((sub: any) => sub.email === email);
-      if (emailExists) {
-        return NextResponse.json({ error: "Email already subscribed" }, { status: 400 });
-      }
-      
-      // Add new subscriber
-      subscribers.push(emailData);
-      
-      // Save updated list
-      await fs.writeFile(filePath, JSON.stringify(subscribers, null, 2));
-      
-      console.log(`[subscribe] New subscriber saved: ${email}`);
-    } catch (err) {
-      console.error('[subscribe] Error saving subscriber:', err);
-      return NextResponse.json({ error: "Failed to save subscription" }, { status: 500 });
-    }
+    // Send email to yourself
+    await resend.emails.send({
+      from: 'FeeLens Signups <onboarding@resend.dev>',
+      to: 'gonzalezclement23@gmail.com', // YOUR actual email
+      subject: 'New FeeLens Waitlist Signup',
+      html: `<p>New signup: <strong>${email}</strong></p><p>Time: ${new Date().toLocaleString()}</p>`
+    });
+
+    console.log(`[subscribe] Email sent for: ${email}`);
+
     const url = new URL(req.nextUrl);
     url.pathname = "/";
     url.searchParams.set("subscribed", "1");
     return NextResponse.redirect(url, { status: 303 });
   } catch (err) {
-    console.error("[subscribe] Unexpected error handling signup:", err);
-    return NextResponse.json({ error: "Unexpected error" }, { status: 500 });
+    console.error("[subscribe] Error:", err);
+    return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
   }
 }
-
-

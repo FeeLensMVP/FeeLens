@@ -1,5 +1,6 @@
-export default function Home({ searchParams }: { searchParams: { [key: string]: string | undefined } }) {
-  const subscribed = searchParams?.subscribed === "1";
+export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
+  const params = await searchParams;
+  const subscribed = params?.subscribed === "1";
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <header className="border-b border-gray-100">
