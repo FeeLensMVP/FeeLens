@@ -1,41 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import { Resend } from 'resend';
-
-const resend = process.env.RESEND_API_KEY 
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
-
-export async function POST(req: NextRequest) {
-  console.log('[subscribe] Starting request');
-  
-  try {
-    const formData = await req.formData();
-    const email = String(formData.get("email") || "").trim();
-    console.log('[subscribe] Email received:', email);
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: "Invalid email" }, { status: 400 });
-    }
-
-    if (resend && process.env.RESEND_API_KEY) {
-      console.log('[subscribe] Sending via Resend...');
-      const result = await resend.emails.send({
-        from: 'FeeLens Signups <onboarding@resend.dev>',
-        to: 'gonzalezclement23@gmail.com',
-        subject: 'New FeeLens Waitlist Signup',
-        html: `<p>New signup: <strong>${email}</strong></p><p>Time: ${new Date().toLocaleString()}</p>`
-      });
-      console.log('[subscribe] Resend result:', result);
-    } else {
-      console.log('[subscribe] Resend not configured');
-    }
-
-    const url = new URL(req.nextUrl);
-    url.pathname = "/";
-    url.searchParams.set("subscribed", "1");
-    return NextResponse.redirect(url, { status: 303 });
-  } catch (err) {
-    console.error("[subscribe] Error:", err);
-    return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
-  }
+export default function Subscribe() {
+  return (
+    <div className="text-center my-12">
+      <h2 className="text-3xl font-bold">Join the Waitlist</h2>
+      <p className="mt-3 text-gray-600">
+        Be the first to try FeeLens and stop overpaying bank fees.
+      </p>
+      <a
+        href="https://docs.google.com/spreadsheets/d/1ZqTRA1pioKbYmkX6mH53CGS3DOnxMvdUBhBtM25MLwk/edit?usp=sharing"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-6 inline-block px-8 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition"
+      >
+        Subscribe Now
+      </a>
+    </div>
+  );
 }
