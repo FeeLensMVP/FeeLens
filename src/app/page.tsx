@@ -55,16 +55,17 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
             <div className="max-w-xl">
               <h3 className="text-2xl font-semibold tracking-tight">Start saving in minutes</h3>
               <p className="mt-2 text-gray-600">Join the waitlist and get early access. No credit card required.</p>
-              <form action="/api/subscribe" method="post" className="mt-6 flex flex-col sm:flex-row gap-3">
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  placeholder="you@company.com"
-                  className="w-full rounded-md border border-gray-300 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <button type="submit" className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-5 py-3 text-white font-medium hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Join waitlist</button>
-              </form>
+
+              <div className="mt-6">
+                <a
+                  href="https://forms.gle/oXLSdoCEQv98aSCb9"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-8 py-4 text-lg font-medium text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                  Join Waitlist
+                </a>
+              </div>
               <p className="mt-3 text-sm text-gray-500">Or <a className="text-indigo-600 hover:text-indigo-500" href="/upload">upload your bank statements</a> to see potential savings now.</p>
             </div>
           </div>
