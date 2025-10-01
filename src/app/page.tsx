@@ -7,7 +7,7 @@ export default async function Home({
   const subscribed = params?.subscribed === "1";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-white text-gray-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#0A1F44] via-[#0D2B6C] to-white text-gray-900 relative overflow-hidden">
       {/* Background Logo Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <img
@@ -29,7 +29,7 @@ export default async function Home({
           </nav>
           <a
             href="#audit"
-            className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="inline-flex items-center px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg rounded-2xl"
           >
             Get started for free 
           </a>
@@ -55,18 +55,12 @@ export default async function Home({
 We audit all your bank charges for the past 24 months.  
 </p>
 
-              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <div className="mt-8">
                 <a
                   href="#audit"
-                  className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-white font-medium hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  className="inline-flex items-center justify-center bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg rounded-2xl px-6 py-3 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
                 >
-                  Request Free Audit
-                </a>
-                <a
-                  href="#signup"
-                  className="inline-flex items-center justify-center rounded-md border border-gray-300 px-6 py-3 text-gray-900 bg-white hover:bg-gray-50"
-                >
-                  Join Waitlist
+                  Get started for free
                 </a>
               </div>
               {subscribed && (
@@ -79,9 +73,9 @@ We audit all your bank charges for the past 24 months.
             {/* Right Side Placeholder Image */}
             <div className="flex justify-center">
               <img
-                src="/images/dashboard.png"
-                alt="FeeLens dashboard preview"
-                className="w-full max-w-md rounded-lg shadow-lg border border-gray-200"
+                src="/images/mac-mockup.png"
+                alt="FeeLens dashboard on Mac monitor"
+                className="w-full max-w-xl drop-shadow-2xl"
               />
             </div>
           </div>
@@ -180,7 +174,7 @@ We audit all your bank charges for the past 24 months.
                 href="https://forms.gle/oXLSdoCEQv98aSCb9"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-8 py-4 text-lg font-medium text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg rounded-2xl"
               >
                 Join Waitlist
               </a>
