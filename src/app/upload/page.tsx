@@ -1,31 +1,28 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
+import { useState } from 'react';
 
 export default function UploadPage() {
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState<{ email: string; company: string }>(
-    { email: "", company: "" },
-  );
+  const [formData, setFormData] = useState({ email: '', company: '' });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
 
-    const response = await fetch("https://formspree.io/f/xnngpygq", {
-      method: "POST",
+    const response = await fetch('https://formspree.io/f/xnngpygq', {
+      method: 'POST',
       body: data,
       headers: {
-        Accept: "application/json",
+        'Accept': 'application/json'
       }
     });
 
     if (response.ok) {
       setFormData({
-        email: data.get("email") as string,
-        company: data.get("company") as string
+        email: data.get('email') as string,
+        company: data.get('company') as string
       });
       setSubmitted(true);
     }
@@ -42,8 +39,7 @@ export default function UploadPage() {
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Request Received!</h2>
           <p className="text-gray-600 mb-4">
-            We will reach out to <strong>{formData.email}</strong> shortly with
-            instructions for the {formData.company} team.
+            We will reach out to you shortly with instructions.
           </p>
           <p className="text-sm text-gray-600 mb-2">
             You can already request your bank to provide:
@@ -55,12 +51,12 @@ export default function UploadPage() {
           <p className="text-sm text-gray-500 mb-6">
             Your audit will be ready in <strong>7 business days</strong>
           </p>
-          <Link
+          <a 
             href="/"
             className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-white font-medium hover:bg-indigo-500"
           >
             Return Home
-          </Link>
+          </a>
         </div>
       </div>
     );
@@ -112,8 +108,7 @@ export default function UploadPage() {
             </button>
 
             <p className="text-xs text-center text-gray-500">
-              After submitting, you&apos;ll receive instructions to email your
-              documents securely.
+              After submitting, you'll receive instructions to email your documents securely.
             </p>
           </form>
         </div>
