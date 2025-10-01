@@ -11,7 +11,7 @@ export default async function Home({
       {/* Background Logo Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <img
-          src="/logo.png" // replace with your FeeLens eye logo
+          src="/logo.png"
           alt="FeeLens logo"
           className="w-[600px] opacity-10"
         />
@@ -24,13 +24,14 @@ export default async function Home({
           <nav className="hidden sm:flex items-center gap-6 text-sm">
             <a href="#problem" className="hover:text-gray-700">Problem</a>
             <a href="#solution" className="hover:text-gray-700">Solution</a>
-            <a href="#signup" className="hover:text-gray-700">Get Started</a>
+            <a href="#audit" className="hover:text-gray-700">Free Audit</a>
+            <a href="#faq" className="hover:text-gray-700">FAQ</a>
           </nav>
           <a
-            href="/upload"
+            href="#audit"
             className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
-            Free 24-month audit
+            Request Free Audit
           </a>
         </div>
       </header>
@@ -47,20 +48,29 @@ export default async function Home({
                 <div>Bank Smarter.</div>
               </h1>
               <p className="mt-6 text-lg text-blue-100 max-w-xl">
-                Your money should work for you, not your bank.  
+                Your money should work for you, not your bank.
               </p>
+
+<p className="mt-2 text-blue-100 max-w-xl">
+Today: We audit all your bank charges (past 24 months).  
+ 
+  <br />
+  Tomorrow: Our AI tracks them and finds more savings.  
+
+</p>
+
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <a
-                  href="#signup"
+                  href="#audit"
                   className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-white font-medium hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
-                  Get started free
+                  Request Free Audit
                 </a>
                 <a
-                  href="/upload"
+                  href="#signup"
                   className="inline-flex items-center justify-center rounded-md border border-gray-300 px-6 py-3 text-gray-900 bg-white hover:bg-gray-50"
                 >
-                  Free 24-month audit
+                  Join Waitlist
                 </a>
               </div>
               {subscribed && (
@@ -73,7 +83,7 @@ export default async function Home({
             {/* Right Side Placeholder Image */}
             <div className="flex justify-center">
               <img
-                src="/images/dashboard.png" // replace with real FeeLens screenshot
+                src="/images/dashboard.png"
                 alt="FeeLens dashboard preview"
                 className="w-full max-w-md rounded-lg shadow-lg border border-gray-200"
               />
@@ -87,16 +97,18 @@ export default async function Home({
             <div>
               <h2 className="text-2xl font-semibold tracking-tight">The problem</h2>
               <p className="mt-4 text-gray-600">
-                Banks overcharge their customers by 8-15% in average. 
+                Banks overcharge their customers by 8–15% on average. 
               </p>
               <p className="mt-2 text-gray-600">
-                Treasurers don’t have hours to comb through every fee statement.  
-              
+                Bank fee statements are messy, complex and full of errors.
+                </p>
+                <p className="mt-2 text-gray-600">
+                  Bank charges get auto-debited, and nobody reviews them.
               </p>
             </div>
             <div className="flex justify-center">
               <img
-                src="/images/analysis.png" // replace with a graphic/illustration
+                src="/images/analysis.png"
                 alt="Hidden fees analysis"
                 className="w-full max-w-sm rounded-lg shadow-md border border-gray-200"
               />
@@ -110,27 +122,63 @@ export default async function Home({
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl font-bold tracking-tight">Our solution</h2>
               <p className="mt-4 text-gray-600">
-                FeeLens scans your statements in seconds.  
-                Find hidden charges. 
-                Spot savings instantly.
+                FeeLens is building an AI tool to scan your fee statements in seconds.
+
+                <br />
+                For now, we provide the same insights through a manual audit.
               </p>
               <ul className="mt-6 space-y-2 text-gray-700 text-lg font-medium">
-                <li>✅ Automated statement parsing</li>
-                <li>✅ Pricing benchmarking</li>
-                <li>✅ Clear savings actions</li>
+                <li>✅ Statements review (manual now, automated soon)</li>
+                <li>✅ Benchmarking vs. pricing negotiated</li>
+                <li>✅ Clear, CFO-ready savings report</li>
               </ul>
             </div>
           </div>
         </section>
 
-              {/* Signup Section */}
-              <section id="signup" className="border-t border-gray-100 relative z-10">
+        {/* Free Audit Section */}
+        <section id="audit" className="border-t border-gray-100 bg-gray-50 relative z-10">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20 text-center">
-            <h3 className="text-3xl font-bold tracking-tight">Ready to save?</h3>
+            <h3 className="text-3xl font-bold tracking-tight">Request Your Free Audit</h3>
             <p className="mt-2 text-gray-600">
-              Join FeeLens early. Free, fast, no card required.
+              Upload your bank fee statements. Get a savings report in PDF.
             </p>
 
+            <div className="mt-6">
+              {/* Replace this form with embedded Tally/Typeform or Next.js API */}
+              <form action="/api/audit-request" method="POST" className="max-w-md mx-auto space-y-4">
+                <input
+                  type="text"
+                  name="company"
+                  placeholder="Company Name"
+                  className="w-full rounded-md border px-4 py-2"
+                  required
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Work Email"
+                  className="w-full rounded-md border px-4 py-2"
+                  required
+                />
+                <button
+                  type="submit"
+                  className="w-full rounded-md bg-indigo-600 px-6 py-3 font-semibold text-white shadow hover:bg-indigo-500"
+                >
+                  Submit Request
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        {/* Signup / Waitlist Section */}
+        <section id="signup" className="border-t border-gray-100 relative z-10">
+          <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20 text-center">
+            <h3 className="text-3xl font-bold tracking-tight">Be First in Line</h3>
+            <p className="mt-2 text-gray-600">
+              Join the waitlist for the fully automated SaaS platform.
+            </p>
             <div className="mt-6">
               <a
                 href="https://forms.gle/oXLSdoCEQv98aSCb9"
@@ -141,18 +189,48 @@ export default async function Home({
                 Join Waitlist
               </a>
             </div>
-          </div>  {/* ✅ close div before section */}
+          </div>
         </section>
 
+        {/* FAQ Section */}
+        <section id="faq" className="border-t border-gray-100 bg-white relative z-10">
+          <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
+            <h2 className="text-3xl font-bold text-center">FAQ</h2>
+            <dl className="mt-10 max-w-3xl mx-auto space-y-8">
+              <div>
+                <dt className="font-medium text-gray-900">How does the free audit work?</dt>
+                <dd className="mt-2 text-gray-700">
+                  You securely share your past 24 months of fee statements. We analyze them and send a professional PDF summary report within 7 business days.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-medium text-gray-900">Is my data safe?</dt>
+                <dd className="mt-2 text-gray-700">
+                  Yes. Your bank fee data is safe with us. It only contains treasury service charges from your banking partners — no vendor or customer details. We use it solely for the audit, then delete it after completion.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-medium text-gray-900">When will the SaaS be ready?</dt>
+                <dd className="mt-2 text-gray-700">
+                  Early adopters will get priority access and better pricing. The automated version is in active development.
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}
       <footer className="border-t border-gray-100 relative z-10 bg-white/80 backdrop-blur-md">
-        <div className="mx-auto max-w-7xl px-6 py-8 text-sm text-gray-500 flex items-center justify-between">
+        <div className="mx-auto max-w-7xl px-6 py-8 text-sm text-gray-500 flex flex-col md:flex-row items-center justify-between gap-4">
           <span>© {new Date().getFullYear()} FeeLens</span>
-          <a href="#signup" className="text-indigo-600 hover:text-indigo-500">
-            Get started
-          </a>
+          <p>Founder: [Clement Gonzalez], 8+ years in corporate treasury & banking audits.</p>
+          <p>
+            Contact:{" "}
+            <a href="mailto:contact@feelens.com" className="text-indigo-600 hover:text-indigo-500">
+              contact@feelens.com
+            </a>
+          </p>
         </div>
       </footer>
     </div>
