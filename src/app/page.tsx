@@ -31,7 +31,7 @@ export default async function Home({
             href="#audit"
             className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
-            Request Free Audit
+            Get started for free 
           </a>
         </div>
       </header>
@@ -52,11 +52,7 @@ export default async function Home({
               </p>
 
 <p className="mt-2 text-blue-100 max-w-xl">
-Today: We audit all your bank charges (past 24 months).  
- 
-  <br />
-  Tomorrow: Our AI tracks them and finds more savings.  
-
+We audit all your bank charges for the past 24 months.  
 </p>
 
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -91,19 +87,19 @@ Today: We audit all your bank charges (past 24 months).
           </div>
         </section>
 
-        {/* Problem Section */}
+        {/*Problem section */}
         <section id="problem" className="border-t border-gray-100 bg-gray-50 relative z-10">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             <div>
-              <h2 className="text-2xl font-semibold tracking-tight">The problem</h2>
+              <h2 className="text-2xl font-semibold tracking-tight">A complex environment</h2>
               <p className="mt-4 text-gray-600">
-                Banks overcharge their customers by 8–15% on average. 
+                Different banks = different file formats = different service descriptions  
               </p>
               <p className="mt-2 text-gray-600">
-                Bank fee statements are messy, complex and full of errors.
+                Bank fee statements are messy, lengthy and full of errors.
                 </p>
                 <p className="mt-2 text-gray-600">
-                  Bank charges get auto-debited, and nobody reviews them.
+                  Bank charges get auto-debited, nobody has time to review them.
               </p>
             </div>
             <div className="flex justify-center">
@@ -116,21 +112,21 @@ Today: We audit all your bank charges (past 24 months).
           </div>
         </section>
 
-        {/* Solution Section */}
+        {/* Value Section */}
         <section id="solution" className="border-t border-gray-100 bg-white relative z-10">
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
             <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl font-bold tracking-tight">Our solution</h2>
+              <h2 className="text-3xl font-bold tracking-tight">What we bring to the table</h2>
               <p className="mt-4 text-gray-600">
-                FeeLens is building an AI tool to scan your fee statements in seconds.
+                FeeLens is an AI tool allowing you to scan your fee statements in seconds.
 
                 <br />
-                For now, we provide the same insights through a manual audit.
+                According to EY, clients reconciling bank fees achieve savings from 20–30% on a year on year basis.
               </p>
               <ul className="mt-6 space-y-2 text-gray-700 text-lg font-medium">
-                <li>✅ Statements review (manual now, automated soon)</li>
-                <li>✅ Benchmarking vs. pricing negotiated</li>
-                <li>✅ Clear, CFO-ready savings report</li>
+                <li>✅ We analyze your fee statements </li>
+                <li>✅ We spot any billing errors </li>
+                <li>✅ You improve your bottom line</li>
               </ul>
             </div>
           </div>
@@ -141,7 +137,7 @@ Today: We audit all your bank charges (past 24 months).
           <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20 text-center">
             <h3 className="text-3xl font-bold tracking-tight">Request Your Free Audit</h3>
             <p className="mt-2 text-gray-600">
-              Upload your bank fee statements. Get a savings report in PDF.
+              Bank fee analysis should not be such a headache.
             </p>
 
             <div className="mt-6">
@@ -198,9 +194,9 @@ Today: We audit all your bank charges (past 24 months).
             <h2 className="text-3xl font-bold text-center">FAQ</h2>
             <dl className="mt-10 max-w-3xl mx-auto space-y-8">
               <div>
-                <dt className="font-medium text-gray-900">How does the free audit work?</dt>
+                <dt className="font-medium text-gray-900">How does the audit work?</dt>
                 <dd className="mt-2 text-gray-700">
-                  You securely share your past 24 months of fee statements. We analyze them and send a professional PDF summary report within 7 business days.
+                  You securely share your past 24 months of fee statements. We analyze them and send a PDF savings report within 7 business days.
                 </dd>
               </div>
               <div>
@@ -212,7 +208,7 @@ Today: We audit all your bank charges (past 24 months).
               <div>
                 <dt className="font-medium text-gray-900">When will the SaaS be ready?</dt>
                 <dd className="mt-2 text-gray-700">
-                  Early adopters will get priority access and better pricing. The automated version is in active development.
+                  Early adopters will get priority access. The AI platform is in active development.
                 </dd>
               </div>
             </dl>
