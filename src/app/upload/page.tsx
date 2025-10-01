@@ -1,10 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function UploadPage() {
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({ email: '', company: '' });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,10 +20,6 @@ export default function UploadPage() {
     });
 
     if (response.ok) {
-      setFormData({
-        email: data.get('email') as string,
-        company: data.get('company') as string
-      });
       setSubmitted(true);
     }
   };
@@ -51,12 +47,12 @@ export default function UploadPage() {
           <p className="text-sm text-gray-500 mb-6">
             Your audit will be ready in <strong>7 business days</strong>
           </p>
-          <a 
+          <Link
             href="/"
             className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-white font-medium hover:bg-indigo-500"
           >
             Return Home
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -108,7 +104,7 @@ export default function UploadPage() {
             </button>
 
             <p className="text-xs text-center text-gray-500">
-              After submitting, you'll receive instructions to email your documents securely.
+              After submitting, you’ll receive instructions to email your documents securely.
             </p>
           </form>
         </div>
