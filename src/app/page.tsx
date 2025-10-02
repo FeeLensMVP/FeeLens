@@ -101,8 +101,8 @@ export default async function Home({
               <div className="space-y-5">
                 <h2 className="text-2xl font-semibold tracking-tight text-slate-900">A complex environment</h2>
                 <div className="space-y-3 text-base text-slate-600">
-                  <p>Different banks => different formats => different service descriptions</p>
-                  <p>Bank fee statements are messy, lengthy and full of errors.</p>
+                  <p>Different banks &gt; different formats &gt; different service descriptions</p>
+                  <p>Bank fee statements are cluttered, lengthy, and full of errors.</p>
                   <p>Bank charges get auto-debited, nobody takes time to review them.</p>
                 </div>
               </div>
@@ -121,7 +121,7 @@ export default async function Home({
           <div className="absolute inset-x-0 -top-32 -z-10 h-[520px] bg-gradient-to-b from-transparent via-emerald-500/10 to-white" />
           <div className="mx-auto max-w-6xl rounded-[44px] border border-emerald-200/50 bg-white/80 px-8 py-16 shadow-[0_60px_120px_-50px_rgba(14,116,144,0.35)] backdrop-blur">
             <div className="mx-auto max-w-3xl text-center">
-              <h2 className="mt-5 text-3xl font-bold tracking-tight text-slate-900">Be the CFO's hero.</h2>
+              <h2 className="mt-5 text-3xl font-bold tracking-tight text-slate-900">Be the CFO&apos;s hero.</h2>
               <p className="mt-4 text-base text-slate-600">
                 EY reports that companies reconciling bank fees save 20-30% annually.
               </p>
