@@ -1,13 +1,13 @@
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | undefined }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const params = await searchParams;
   const subscribed = params?.subscribed === "1";
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_#0A1F44_0%,_#071635_45%,_#0D2B6C_70%,_#0F2250_85%,_white_100%)] text-gray-900">
+    <div className="relative min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top,_#0A1F44_0%,_#071635_45%,_#0D2B6C_70%,_#0F2250_85%,_white_100%)] text-gray-900">
       {/* Ambient gradient shapes */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-16 right-[-10%] h-72 w-72 rounded-full bg-emerald-400/20 blur-3xl" />
@@ -75,11 +75,6 @@ export default async function Home({
                 </a>
                 <div className="hidden h-12 w-32 rounded-full border border-white/20 bg-white/10 backdrop-blur sm:block" aria-hidden="true" />
               </div>
-              {subscribed && (
-                <div className="mt-6 rounded-2xl border border-emerald-200/70 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-800 shadow-sm">
-                  {"Thanks! You're on the list. We'll be in touch shortly."}
-                </div>
-              )}
             </div>
 
             {/* Right Side Placeholder Image */}
@@ -94,7 +89,7 @@ export default async function Home({
         </section>
 
         {/*Context section */}
-        <section id="context" className="relative z-10 mt-12 border-t border-white/10">
+        <section id="context" className="relative z-10 mt-12 border-t border-white/10 scroll-mt-32">
           <div className="absolute inset-x-0 -top-24 -z-10 h-64 bg-gradient-to-b from-white/20 via-white/0 to-transparent" />
           <div className="mx-auto grid max-w-6xl gap-12 rounded-[40px] border border-white/20 bg-white/80 px-8 py-16 shadow-xl backdrop-blur">
             <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
@@ -117,7 +112,7 @@ export default async function Home({
         </section>
 
         {/* Solution Section */}
-        <section id="solution" className="relative z-10 mt-20">
+        <section id="solution" className="relative z-10 mt-20 scroll-mt-32">
           <div className="absolute inset-x-0 -top-32 -z-10 h-[520px] bg-gradient-to-b from-transparent via-emerald-500/10 to-white" />
           <div className="mx-auto max-w-6xl rounded-[44px] border border-emerald-200/50 bg-white/80 px-8 py-16 shadow-[0_60px_120px_-50px_rgba(14,116,144,0.35)] backdrop-blur">
             <div className="mx-auto max-w-3xl text-center">
@@ -135,13 +130,12 @@ export default async function Home({
         </section>
 
         {/* Free Audit Section */}
-        <section id="audit" className="relative z-10 mt-24">
+        <section id="audit" className="relative z-10 mt-24 scroll-mt-32">
           <div className="mx-auto max-w-5xl overflow-hidden rounded-[44px] border border-emerald-200/60 bg-gradient-to-br from-emerald-500/10 via-white to-sky-500/10 px-8 py-16 text-center shadow-[0_60px_120px_-50px_rgba(16,185,129,0.45)] backdrop-blur">
             <h3 className="text-3xl font-bold tracking-tight text-slate-900">Request Your Free Audit</h3>
             <p className="mt-2 text-base text-slate-600">Bank fee analysis should not be such a headache.</p>
 
             <div className="mt-10">
-              {/* Replace this form with embedded Tally/Typeform or Next.js API */}
               <form action="/api/audit-request" method="POST" className="mx-auto grid max-w-2xl gap-4 md:grid-cols-[1fr_1fr_auto]">
                 <input
                   type="text"
@@ -164,30 +158,17 @@ export default async function Home({
                   Submit Request
                 </button>
               </form>
-            </div>
-          </div>
-        </section>
-
-        {/* Signup / Waitlist Section */}
-        <section id="signup" className="relative z-10 mt-24">
-          <div className="mx-auto max-w-5xl rounded-[44px] border border-white/40 bg-white/80 px-8 py-16 text-center shadow-xl backdrop-blur">
-            <h3 className="text-3xl font-bold tracking-tight text-slate-900">Be First in Line</h3>
-            <p className="mt-2 text-base text-slate-600">Join the waitlist for FeeLens AI & uncover hidden charges in seconds.</p>
-            <div className="mt-8 flex justify-center">
-              <a
-                href="https://forms.gle/oXLSdoCEQv98aSCb9"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-sky-400 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-              >
-                Join Waitlist
-              </a>
+              {subscribed && (
+                <p className="mt-6 rounded-2xl border border-emerald-200/70 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-800 shadow-sm">
+                  {"Thanks! You're on the list. We'll be in touch shortly."}
+                </p>
+              )}
             </div>
           </div>
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="relative z-10 mt-24">
+        <section id="faq" className="relative z-10 mt-24 scroll-mt-32">
           <div className="mx-auto max-w-6xl rounded-[44px] border border-white/30 bg-white/80 px-8 py-16 shadow-xl backdrop-blur">
             <h2 className="text-3xl font-bold text-center text-slate-900">FAQ</h2>
             <dl className="mx-auto mt-10 grid max-w-3xl gap-6">
