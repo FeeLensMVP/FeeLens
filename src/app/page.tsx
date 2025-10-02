@@ -101,8 +101,8 @@ export default async function Home({
               <div className="space-y-5">
                 <h2 className="text-2xl font-semibold tracking-tight text-slate-900">A complex environment</h2>
                 <div className="space-y-3 text-base text-slate-600">
-                  <p>Different banks => different formats => different service descriptions</p>
-                  <p>Bank fee statements are messy, lengthy and full of errors.</p>
+                  <p>Different banks &gt; different formats &gt; different service descriptions</p>
+                  <p>Bank fee statements are cluttered, lengthy, and full of errors.</p>
                   <p>Bank charges get auto-debited, nobody takes time to review them.</p>
                 </div>
               </div>
