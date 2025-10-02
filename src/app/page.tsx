@@ -25,8 +25,8 @@ export default async function Home({
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <div className="text-xl font-semibold tracking-tight text-slate-900">FeeLens</div>
           <nav className="hidden items-center gap-3 rounded-full border border-white/40 bg-white/70 px-6 py-2 text-sm font-medium text-slate-700 shadow-sm backdrop-blur lg:flex">
-            <a href="#problem" className="rounded-full px-3 py-1 transition hover:bg-slate-100">
-              Problem
+            <a href="#context" className="rounded-full px-3 py-1 transition hover:bg-slate-100">
+              Context
             </a>
             <a href="#solution" className="rounded-full px-3 py-1 transition hover:bg-slate-100">
               Solution
@@ -63,7 +63,7 @@ export default async function Home({
               </p>
 
               <p className="mt-2 max-w-xl text-blue-100">
-                We audit all your bank charges for the past 24 months.
+                We audit all your bank charges from the past 24 months.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -93,17 +93,17 @@ export default async function Home({
           </div>
         </section>
 
-        {/*Problem section */}
-        <section id="problem" className="relative z-10 mt-12 border-t border-white/10">
+        {/*Context section */}
+        <section id="context" className="relative z-10 mt-12 border-t border-white/10">
           <div className="absolute inset-x-0 -top-24 -z-10 h-64 bg-gradient-to-b from-white/20 via-white/0 to-transparent" />
           <div className="mx-auto grid max-w-6xl gap-12 rounded-[40px] border border-white/20 bg-white/80 px-8 py-16 shadow-xl backdrop-blur">
             <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="space-y-5">
                 <h2 className="text-2xl font-semibold tracking-tight text-slate-900">A complex environment</h2>
                 <div className="space-y-3 text-base text-slate-600">
-                  <p>Different banks = different file formats = different service descriptions</p>
+                  <p>Different banks => different formats => different service descriptions</p>
                   <p>Bank fee statements are messy, lengthy and full of errors.</p>
-                  <p>Bank charges get auto-debited, nobody has time to review them.</p>
+                  <p>Bank charges get auto-debited, nobody takes time to review them.</p>
                 </div>
               </div>
               <div className="flex justify-center">
@@ -116,20 +116,18 @@ export default async function Home({
           </div>
         </section>
 
-        {/* Value Section */}
+        {/* Solution Section */}
         <section id="solution" className="relative z-10 mt-20">
           <div className="absolute inset-x-0 -top-32 -z-10 h-[520px] bg-gradient-to-b from-transparent via-emerald-500/10 to-white" />
           <div className="mx-auto max-w-6xl rounded-[44px] border border-emerald-200/50 bg-white/80 px-8 py-16 shadow-[0_60px_120px_-50px_rgba(14,116,144,0.35)] backdrop-blur">
             <div className="mx-auto max-w-3xl text-center">
-              <h2 className="mt-5 text-3xl font-bold tracking-tight text-slate-900">What we bring to the table</h2>
+              <h2 className="mt-5 text-3xl font-bold tracking-tight text-slate-900">Be the CFO's hero.</h2>
               <p className="mt-4 text-base text-slate-600">
-                FeeLens is an AI tool allowing you to scan your fee statements in seconds.
-                <br />
-                According to EY, clients reconciling bank fees achieve savings from 20–30% on a year on year basis.
+                EY reports that companies reconciling bank fees save 20-30% annually.
               </p>
               <ul className="mt-8 grid gap-4 text-lg font-medium text-slate-700 md:grid-cols-3">
-                <li className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-8 shadow-lg shadow-emerald-500/10">✅ We analyze your fee statements</li>
-                <li className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-8 shadow-lg shadow-emerald-500/10">✅ We spot any billing errors</li>
+                <li className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-8 shadow-lg shadow-emerald-500/10">✅ We lens through your fee statements</li>
+                <li className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-8 shadow-lg shadow-emerald-500/10">✅ We reveal any billing errors</li>
                 <li className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-8 shadow-lg shadow-emerald-500/10">✅ You improve your bottom line</li>
               </ul>
             </div>
@@ -174,7 +172,7 @@ export default async function Home({
         <section id="signup" className="relative z-10 mt-24">
           <div className="mx-auto max-w-5xl rounded-[44px] border border-white/40 bg-white/80 px-8 py-16 text-center shadow-xl backdrop-blur">
             <h3 className="text-3xl font-bold tracking-tight text-slate-900">Be First in Line</h3>
-            <p className="mt-2 text-base text-slate-600">Join the waitlist for the fully automated SaaS platform.</p>
+            <p className="mt-2 text-base text-slate-600">Join the waitlist for FeeLens AI & uncover hidden charges in seconds.</p>
             <div className="mt-8 flex justify-center">
               <a
                 href="https://forms.gle/oXLSdoCEQv98aSCb9"
@@ -196,19 +194,19 @@ export default async function Home({
               <div className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-5 shadow-md">
                 <dt className="font-semibold text-slate-900">How does the audit work?</dt>
                 <dd className="mt-2 text-sm text-slate-600">
-                  You securely share your past 24 months of fee statements. We analyze them and send a PDF savings report within 7 business days.
+                  You securely share your past 24 months of fee statements. We examine them and send you a PDF summary savings report within 7 business days.
                 </dd>
               </div>
               <div className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-5 shadow-md">
                 <dt className="font-semibold text-slate-900">Is my data safe?</dt>
                 <dd className="mt-2 text-sm text-slate-600">
-                  Yes. Your bank fee data is safe with us. It only contains treasury service charges from your banking partners— no vendor or customer details. We use it solely for the audit, then delete it after completion.
+                  Yes. Your bank fee data is safe with us. Bank fee statements and pricing agreement only contain the treasury services you are using and the price you pay for them — no vendor or customer details are ever shared.
                 </dd>
               </div>
               <div className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-5 shadow-md">
                 <dt className="font-semibold text-slate-900">When will the SaaS be ready?</dt>
                 <dd className="mt-2 text-sm text-slate-600">
-                  Early adopters will get priority access. The AI platform is in active development.
+                  Early adopters will get priority access in 2026. FeeLens AI is in active development.
                 </dd>
               </div>
             </dl>
@@ -220,7 +218,7 @@ export default async function Home({
       <footer className="relative z-10 mt-24 border-t border-white/20 bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-slate-500 md:flex-row">
           <span className="font-medium text-slate-700">© {new Date().getFullYear()} FeeLens</span>
-          <p>Founder: [Clement Gonzalez], 8+ years in corporate treasury & banking audits.</p>
+          <p>Founder: Background with 8+ years of experience in corporate treasury & banking audits.</p>
           <p>
             Contact:{" "}
             <a href="mailto:contact@feelens.com" className="font-medium text-emerald-600 transition hover:text-emerald-500">
