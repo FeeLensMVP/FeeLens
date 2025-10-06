@@ -79,11 +79,7 @@ export default async function Home({
 
             {/* Right Side Placeholder Image */}
             <div className="flex justify-center">
-              <div className="relative w-full max-w-xl rounded-[36px] border border-white/10 bg-white/10 p-4 shadow-[0_40px_120px_-40px_rgba(45,212,191,0.45)] backdrop-blur">
-                <div className="absolute -top-6 left-1/2 h-12 w-12 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 opacity-60 blur-lg" />
-                <img src="/images/mac-mockup.png" alt="FeeLens dashboard on Mac monitor" className="relative w-full rounded-3xl shadow-2xl" />
-                <div className="pointer-events-none absolute inset-0 rounded-[36px] ring-1 ring-white/30" />
-              </div>
+              <img src="/images/FeeLens-dashboard.png" alt="" className="w-full rounded-3xl shadow-2xl" />
             </div>
           </div>
         </section>
@@ -102,10 +98,7 @@ export default async function Home({
                 </div>
               </div>
               <div className="flex justify-center">
-                <div className="relative w-full max-w-sm overflow-hidden rounded-[32px] border border-slate-200/70 bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-6 shadow-lg">
-                  <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-emerald-200/60 blur-2xl" />
-                  <img src="/images/analysis.png" alt="Hidden fees analysis" className="relative w-full rounded-2xl shadow-2xl" />
-                </div>
+                <img src="/images/FeeLens-complex-env.png" alt="" className="w-full rounded-2xl shadow-2xl" />
               </div>
             </div>
           </div>
