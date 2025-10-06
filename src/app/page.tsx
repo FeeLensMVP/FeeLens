@@ -79,8 +79,11 @@ export default async function Home({
 
             {/* Right Side Placeholder Image */}
             <div className="flex justify-center">
-              <img src="/images/FeeLens-dashboard.png" alt="" className="w-full rounded-3xl shadow-2xl" />
-            </div>
+          <img
+            src="/images/FeeLens-dashboard.png"
+            alt="FeeLens dashboard"
+            className="w-full max-w-xl rounded-3xl shadow-2xl"
+            />
           </div>
         </section>
 
@@ -98,8 +101,11 @@ export default async function Home({
                 </div>
               </div>
               <div className="flex justify-center">
-                <img src="/images/FeeLens-complex-env.png" alt="" className="w-full rounded-2xl shadow-2xl" />
-              </div>
+          <img
+              src="/images/FeeLens-complex-env.png"
+              alt="Bank fees complexity visualization"
+              className="w-full max-w-sm rounded-2xl shadow-2xl"
+              />
             </div>
           </div>
         </section>
