@@ -94,8 +94,8 @@ export default async function Home({
           <div className="mx-auto grid max-w-6xl gap-12 px-8 py-16">
             <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="space-y-5">
-                <h2 className="text-2xl font-semibold tracking-tight text-slate-900">A complex environment</h2>
-                <div className="space-y-3 text-base text-slate-600">
+                <h2 className="text-2xl font-semibold tracking-tight text-white">A complex environment</h2>
+                <div className="space-y-3 text-base text-white">
                   <p>Different banks &gt; different formats &gt; different service descriptions</p>
                   <p>Bank fee statements are cluttered, lengthy, and full of errors.</p>
                   <p>Bank charges get auto-debited, nobody takes time to review them.</p>
@@ -205,8 +205,8 @@ export default async function Home({
           <p>Founder: Background with 8+ years of experience in corporate treasury & banking audits.</p>
           <p>
             Contact:{" "}
-            <a href="mailto:contact@feelens.com" className="font-medium text-emerald-600 transition hover:text-emerald-500">
-              contact@feelens.com
+            <a href="mailto:support@feelens.us" className="font-medium text-emerald-600 transition hover:text-emerald-500">
+              support@feelens.us
             </a>
           </p>
         </div>
