@@ -73,16 +73,16 @@ export default async function Home({
                 >
                   Get started for free
                 </a>
-                <div className="hidden h-12 w-32 rounded-full border border-white/20 bg-white/10 backdrop-blur sm:block" aria-hidden="true" />
               </div>
             </div>
 
-            {/* Right Side Placeholder Image */}
-            <div className="flex justify-center">
+            {/* Hero dashboard image with soft glow */}
+            <div className="relative flex justify-center">
+              <div className="absolute -top-10 right-0 h-72 w-72 rounded-full bg-gradient-to-tr from-emerald-400/20 via-sky-400/10 to-transparent blur-3xl" />
               <img
                 src="/images/FeeLens-dashboard.png"
                 alt="FeeLens dashboard"
-                className="w-full max-w-xl rounded-3xl shadow-2xl"
+                className="relative w-full max-w-xl rounded-[36px] shadow-[0_40px_120px_-40px_rgba(45,212,191,0.45)]"
               />
             </div>
           </div>
@@ -91,7 +91,7 @@ export default async function Home({
         {/*Context section */}
         <section id="context" className="relative z-10 mt-12 border-t border-white/10 scroll-mt-32">
           <div className="absolute inset-x-0 -top-24 -z-10 h-64 bg-gradient-to-b from-white/20 via-white/0 to-transparent" />
-          <div className="mx-auto grid max-w-6xl gap-12 rounded-[40px] border border-white/20 bg-white/80 px-8 py-16 shadow-xl backdrop-blur">
+          <div className="mx-auto grid max-w-6xl gap-12 px-8 py-16">
             <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="space-y-5">
                 <h2 className="text-2xl font-semibold tracking-tight text-slate-900">A complex environment</h2>
@@ -101,11 +101,13 @@ export default async function Home({
                   <p>Bank charges get auto-debited, nobody takes time to review them.</p>
                 </div>
               </div>
-              <div className="flex justify-center">
+              {/* Complex environment image with subtle glow */}
+              <div className="relative flex justify-center">
+                <div className="absolute -top-10 right-0 h-40 w-40 rounded-full bg-gradient-to-br from-sky-400/10 via-emerald-400/10 to-transparent blur-2xl" />
                 <img
                   src="/images/FeeLens-complex-env.png"
                   alt="Bank fees complexity visualization"
-                  className="w-full max-w-sm rounded-2xl shadow-2xl"
+                  className="relative w-full max-w-sm rounded-[32px] shadow-[0_30px_90px_-30px_rgba(56,189,248,0.45)]"
                 />
               </div>
             </div>
