@@ -1,31 +1,60 @@
-// src/app/api/audit-request/route.ts
+// Fichier : src/app/api/audit-request/route.ts
 
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
+import { ConfirmationEmail } from "../../../emails/ConfirmationEmail";
+import { NotificationEmail } from "../../../emails/NotificationEmail";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// --- CONFIGURATION IMPORTANTE ---
+// Remplacez 'feelens.us' par votre domaine VÉRIFIÉ sur Resend.
+// 'noreply@' est une convention standard, mais vous pouvez utiliser 'support@', etc.
+const FROM_EMAIL = 'FeeLens <noreply@revy-analyse.fr>'; 
+// Remplacez par l'email où VOUS voulez recevoir les notifications.
+const ADMIN_EMAIL = 'canler.maxence@gmail.com'; 
+// --------------------------------
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { name, company, email, files } = body;
 
-    // --- C'EST ICI QUE VOUS METTREZ VOTRE LOGIQUE BACKEND ---
-    // 1. Valider les données (s'assurer que rien ne manque).
-    // 2. Créer une nouvelle entrée dans votre base de données (ex: une table "Audits").
-    // 3. Associer le nom, l'entreprise, l'email et la liste des URLs de fichiers à cette entrée.
-    // 4. Envoyer un email de notification à vous-même et/ou un accusé de réception au client.
-    // ---------------------------------------------------------
+    // Utilise Promise.all pour envoyer les deux emails en parallèle
+    const [confirmationData, notificationData] = await Promise.all([
+      // 1. Envoyer l'email de confirmation au CFO
+      resend.emails.send({
+        from: FROM_EMAIL,
+        to: email, // L'email du CFO
+        subject: `Your Audit Request for ${company}`,
+        react: ConfirmationEmail({ name, company }),
+      }),
+      // 2. Envoyer l'email de notification à vous-même
+      resend.emails.send({
+        from: FROM_EMAIL,
+        to: ADMIN_EMAIL, // Votre email
+        subject: `New Audit Request from ${company}`,
+        react: NotificationEmail({ name, company, email, fileCount: files.length }),
+      })
+    ]);
 
-    // Pour l'instant, on affiche juste les données dans la console du serveur pour vérifier.
-    console.log("--- NOUVELLE DEMANDE D'AUDIT ---");
-    console.log("Nom:", name);
-    console.log("Entreprise:", company);
-    console.log("Email:", email);
-    console.log("Fichiers:", files.map((f: any) => f.name).join(", "));
-    console.log("---------------------------------");
+    // Vérifie si l'une des deux requêtes a échoué
+    if (confirmationData.error) {
+      console.error("Erreur lors de l'envoi de l'email de confirmation:", confirmationData.error);
+      throw new Error("Failed to send confirmation email.");
+    }
+    if (notificationData.error) {
+      console.error("Erreur lors de l'envoi de l'email de notification:", notificationData.error);
+      throw new Error("Failed to send notification email.");
+    }
 
-    return NextResponse.json({ success: true, message: "Audit request received." });
+    console.log("--- EMAILS ENVOYÉS AVEC SUCCÈS ---");
+
+    return NextResponse.json({ success: true, message: "Demande d'audit bien reçue." });
 
   } catch (error) {
-    console.error("Erreur lors de la soumission de l'audit:", error);
-    return NextResponse.json({ success: false, message: "An error occurred." }, { status: 500 });
+    console.error("Erreur dans /api/audit-request:", error);
+    // On retourne un message d'erreur plus clair au client
+    return NextResponse.json({ success: false, message: "An error occurred while sending emails." }, { status: 500 });
   }
 }
