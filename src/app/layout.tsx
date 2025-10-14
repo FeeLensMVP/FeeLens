@@ -1,3 +1,5 @@
+// src/app/layout.tsx
+
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -13,9 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* CORRECTION : On applique la structure Flexbox directement sur le <body>.
-        Il devient le conteneur principal qui fait au moins la taille de l'écran.
-      */}
+      {/* On remet la structure flexbox ici, c'est le bon endroit */}
       <body className="flex min-h-screen flex-col font-sans antialiased">
         {children}
       </body>
