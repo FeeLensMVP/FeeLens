@@ -26,9 +26,6 @@ export default async function Home({
         <div className="absolute -left-20 top-40 h-96 w-96 rounded-full bg-sky-500/10 blur-[120px]" />
         <div className="absolute bottom-[-20%] right-[10%] h-80 w-80 rounded-full bg-emerald-500/10 blur-[120px]" />
       </div>
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-20 mix-blend-soft-light">
-        <img src={logoWatermark.src} alt="FeeLens logo watermark" className="w-[640px] max-w-full" />
-      </div>
 
       <Header />
       <main className="relative z-10">
