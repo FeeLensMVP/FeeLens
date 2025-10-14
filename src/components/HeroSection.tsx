@@ -36,7 +36,7 @@ export default function HeroSection({ image }: HeroSectionProps) {
             src={image}
             alt="FeeLens dashboard"
             priority // 'priority' dit à Next.js de charger cette image en premier car elle est importante
-            className="relative w-full max-w-xl rounded-[36px] shadow-[0_40px_120px_-40px_rgba(45,212,191,0.45)]"
+            className="relative w-full max-w-xl rounded-[36px] filter drop-shadow-[0_20px_50px_rgba(45,212,191,0.45)]"
           />
         </div>
       </div>

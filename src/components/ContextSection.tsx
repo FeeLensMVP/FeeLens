@@ -27,7 +27,7 @@ export default function ContextSection({ image }: ContextSectionProps) {
             <Image
               src={image}
               alt="Bank fees complexity visualization"
-              className="relative w-full max-w-sm rounded-[32px] shadow-[0_30px_90px_-30px_rgba(56,189,248,0.45)]"
+              className="relative w-full max-w-sm rounded-[32px] filter drop-shadow-[0_10px_60px_rgba(56,189,248,0.6)]"
             />
           </div>
         </div>
