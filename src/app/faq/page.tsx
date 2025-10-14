@@ -11,7 +11,7 @@ export default function FaqPage() {
       <PageBackground />
       
       <Header />
-      <main className="flex flex-grow items-center justify-center px-4 py-24 sm:py-32">
+      <main className="flex flex-grow items-center justify-center px-4">
         <FaqSection />
       </main>
       <Footer />
