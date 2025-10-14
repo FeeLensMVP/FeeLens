@@ -6,8 +6,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageBackground from "@/components/PageBackground";
 import { useState } from "react";
+import Link from "next/link";
 import { UploadDropzone } from "@/utils/uploadthing";
-import { File, Loader2 } from "lucide-react";
+import { File, Loader2, CheckCircle } from "lucide-react";
 
 type UploadedFile = {
   key: string;
@@ -56,9 +57,25 @@ export default function UploadPage() {
       <div className="relative overflow-hidden bg-[radial-gradient(circle_at_top,_#0A1F44_0%,_#071635_45%,_#0D2B6C_70%,_#0F2250_85%,_white_100%)] text-white">
         <PageBackground />
         <Header />
-        <main className="flex flex-grow flex-col items-center justify-center px-4 text-center">
-          <h1 className="text-4xl font-bold">Thank You!</h1>
-          <p className="mt-4 text-lg text-blue-100">Your audit request has been submitted successfully.<br/>We will be in touch shortly.</p>
+        {/* --- MODIFICATION ICI --- */}
+        {/* J'ai ajouté un padding vertical (py-16) pour créer de l'espace */}
+        <main className="flex flex-grow flex-col items-center justify-center px-4 py-30 text-center">
+          <div className="w-full max-w-md rounded-2xl border border-white/20 bg-white/10 p-8 text-center backdrop-blur-md">
+            <CheckCircle className="mx-auto h-16 w-16 text-emerald-400" />
+            <h1 className="mt-6 text-3xl font-bold">Thank You!</h1>
+            <p className="mt-4 text-lg text-blue-100">
+              Your audit request has been submitted.
+            </p>
+            <p className="mt-2 text-blue-200">
+              We will analyze your files and be in touch shortly.
+            </p>
+            <Link 
+              href="/"
+              className="mt-8 inline-block rounded-md bg-emerald-600 px-6 py-2 font-semibold text-white transition-transform hover:scale-105"
+            >
+              Back to Home
+            </Link>
+          </div>
         </main>
         <Footer />
       </div>
@@ -95,13 +112,10 @@ export default function UploadPage() {
                     }
                   }}
                   onUploadError={(error: Error) => alert(`Upload Failed: ${error.message}`)}
-                  
-                  // --- MODIFICATION ICI ---
                   appearance={{
                     container: { padding: "1rem", border: "none" },
                     uploadIcon: { width: "48px" },
                     label: { color: "#a7bde8" },
-                    // On cible spécifiquement le bouton
                     button: `
                       w-full mt-4 rounded-md px-4 py-2 text-base font-semibold text-white
                       bg-gradient-to-r from-emerald-600 to-sky-600
