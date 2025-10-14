@@ -1,216 +1,44 @@
+import Header from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
+import ContextSection from "@/components/ContextSection";
+import SolutionSection from "@/components/SolutionSection";
+import AuditSection from "@/components/AuditSection";
+import FaqSection from "@/components/FaqSection";
+import Footer from "@/components/Footer";
+
+import logoWatermark from "@/assets/logo.png";
+import dashboardImage from "@/assets/images/FeeLens-dashboard.png";
+import complexEnvImage from "@/assets/images/FeeLens-complex-env.png";
+
+
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const params = await searchParams;
-  const subscribed = params?.subscribed === "1";
+  const subscribed = searchParams?.subscribed === "1";
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top,_#0A1F44_0%,_#071635_45%,_#0D2B6C_70%,_#0F2250_85%,_white_100%)] text-gray-900">
-      {/* Ambient gradient shapes */}
+      {/* Les éléments de fond restent ici car ils couvrent toute la page */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-16 right-[-10%] h-72 w-72 rounded-full bg-emerald-400/20 blur-3xl" />
         <div className="absolute -left-20 top-40 h-96 w-96 rounded-full bg-sky-500/10 blur-[120px]" />
         <div className="absolute bottom-[-20%] right-[10%] h-80 w-80 rounded-full bg-emerald-500/10 blur-[120px]" />
       </div>
-
-      {/* Background Logo Watermark */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-20 mix-blend-soft-light">
-        <img src="/logo.png" alt="FeeLens logo" className="w-[640px] max-w-full" />
+        <img src={logoWatermark.src} alt="FeeLens logo watermark" className="w-[640px] max-w-full" />
       </div>
 
-      {/* Header */}
-      <header className="relative z-20 border-b border-white/10 bg-white/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-          <div className="text-xl font-semibold tracking-tight text-slate-900">FeeLens</div>
-          <nav className="hidden items-center gap-3 rounded-full border border-white/40 bg-white/70 px-6 py-2 text-sm font-medium text-slate-700 shadow-sm backdrop-blur lg:flex">
-            <a href="#context" className="rounded-full px-3 py-1 transition hover:bg-slate-100">
-              Context
-            </a>
-            <a href="#solution" className="rounded-full px-3 py-1 transition hover:bg-slate-100">
-              Solution
-            </a>
-            <a href="#audit" className="rounded-full px-3 py-1 transition hover:bg-slate-100">
-              Free Audit
-            </a>
-            <a href="#faq" className="rounded-full px-3 py-1 transition hover:bg-slate-100">
-              FAQ
-            </a>
-          </nav>
-          <a
-            href="#audit"
-            className="inline-flex items-center rounded-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-sky-400 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2"
-          >
-            Get started for free
-          </a>
-        </div>
-      </header>
-
-      {/* Hero Section */}
+      <Header />
       <main className="relative z-10">
-        <section className="relative">
-          <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 py-24 sm:py-32 lg:grid-cols-[1.05fr_0.95fr]">
-            {/* Left Text */}
-            <div className="max-w-2xl">
-              <h1 className="mt-6 space-y-2 text-5xl font-extrabold tracking-tight text-white drop-shadow-md sm:text-6xl">
-                <div>Stop Fees.</div>
-                <div>Save More.</div>
-                <div>Bank Smarter.</div>
-              </h1>
-              <p className="mt-6 max-w-xl text-lg text-blue-100">
-                Your money should work for you, not your bank.
-              </p>
-
-              <p className="mt-2 max-w-xl text-blue-100">
-                We audit all your bank charges from the past 24 months.
-              </p>
-
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <a
-                  href="#audit"
-                  className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-sky-400 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:scale-[1.01] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2"
-                >
-                  Get started for free
-                </a>
-              </div>
-            </div>
-
-            {/* Hero dashboard image with soft glow */}
-            <div className="relative flex justify-center">
-              <div className="absolute -top-10 right-0 h-72 w-72 rounded-full bg-gradient-to-tr from-emerald-400/20 via-sky-400/10 to-transparent blur-3xl" />
-              <img
-                src="/images/FeeLens-dashboard.png"
-                alt="FeeLens dashboard"
-                className="relative w-full max-w-xl rounded-[36px] shadow-[0_40px_120px_-40px_rgba(45,212,191,0.45)]"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/*Context section */}
-        <section id="context" className="relative z-10 mt-12 border-t border-white/10 scroll-mt-32">
-          <div className="absolute inset-x-0 -top-24 -z-10 h-64 bg-gradient-to-b from-white/20 via-white/0 to-transparent" />
-          <div className="mx-auto grid max-w-6xl gap-12 px-8 py-16">
-            <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="space-y-5">
-                <h2 className="text-2xl font-semibold tracking-tight text-white">A complex environment</h2>
-                <div className="space-y-3 text-base text-white">
-                  <p>Different banks &gt; different formats &gt; different service descriptions</p>
-                  <p>Bank fee statements are cluttered, lengthy, and full of errors.</p>
-                  <p>Bank charges get auto-debited, nobody takes time to review them.</p>
-                </div>
-              </div>
-              {/* Complex environment image with subtle glow */}
-              <div className="relative flex justify-center">
-                <div className="absolute -top-10 right-0 h-40 w-40 rounded-full bg-gradient-to-br from-sky-400/10 via-emerald-400/10 to-transparent blur-2xl" />
-                <img
-                  src="/images/FeeLens-complex-env.png"
-                  alt="Bank fees complexity visualization"
-                  className="relative w-full max-w-sm rounded-[32px] shadow-[0_30px_90px_-30px_rgba(56,189,248,0.45)]"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Solution Section */}
-        <section id="solution" className="relative z-10 mt-20 scroll-mt-32">
-          <div className="absolute inset-x-0 -top-32 -z-10 h-[520px] bg-gradient-to-b from-transparent via-emerald-500/10 to-white" />
-          <div className="mx-auto max-w-6xl rounded-[44px] border border-emerald-200/50 bg-white/80 px-8 py-16 shadow-[0_60px_120px_-50px_rgba(14,116,144,0.35)] backdrop-blur">
-            <div className="mx-auto max-w-3xl text-center">
-              <h2 className="mt-5 text-3xl font-bold tracking-tight text-slate-900">Be the CFO&apos;s hero.</h2>
-              <p className="mt-4 text-base text-slate-600">
-                EY reports that companies reconciling bank fees save 20-30% annually.
-              </p>
-              <ul className="mt-8 grid gap-4 text-lg font-medium text-slate-700 md:grid-cols-3">
-                <li className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-8 shadow-lg shadow-emerald-500/10">✅ We lens through your fee statements</li>
-                <li className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-8 shadow-lg shadow-emerald-500/10">✅ We reveal any billing errors</li>
-                <li className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-8 shadow-lg shadow-emerald-500/10">✅ You improve your bottom line</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* Free Audit Section */}
-        <section id="audit" className="relative z-10 mt-24 scroll-mt-32">
-          <div className="mx-auto max-w-5xl overflow-hidden rounded-[44px] border border-emerald-200/60 bg-gradient-to-br from-emerald-500/10 via-white to-sky-500/10 px-8 py-16 text-center shadow-[0_60px_120px_-50px_rgba(16,185,129,0.45)] backdrop-blur">
-            <h3 className="text-3xl font-bold tracking-tight text-slate-900">Request Your Free Audit</h3>
-            <p className="mt-2 text-base text-slate-600">Bank fee analysis should not be such a headache.</p>
-
-            <div className="mt-10">
-              <form action="/api/audit-request" method="POST" className="mx-auto grid max-w-2xl gap-4 md:grid-cols-[1fr_1fr_auto]">
-                <input
-                  type="text"
-                  name="company"
-                  placeholder="Company Name"
-                  className="w-full rounded-2xl border border-white/60 bg-white/90 px-4 py-3 text-base text-slate-700 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-                  required
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Work Email"
-                  className="w-full rounded-2xl border border-white/60 bg-white/90 px-4 py-3 text-base text-slate-700 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-sky-400 px-6 py-3 font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-                >
-                  Submit Request
-                </button>
-              </form>
-              {subscribed && (
-                <p className="mt-6 rounded-2xl border border-emerald-200/70 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-800 shadow-sm">
-                  {"Thanks! You're on the list. We'll be in touch shortly."}
-                </p>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* FAQ Section */}
-        <section id="faq" className="relative z-10 mt-24 scroll-mt-32">
-          <div className="mx-auto max-w-6xl rounded-[44px] border border-white/30 bg-white/80 px-8 py-16 shadow-xl backdrop-blur">
-            <h2 className="text-3xl font-bold text-center text-slate-900">FAQ</h2>
-            <dl className="mx-auto mt-10 grid max-w-3xl gap-6">
-              <div className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-5 shadow-md">
-                <dt className="font-semibold text-slate-900">How does the audit work?</dt>
-                <dd className="mt-2 text-sm text-slate-600">
-                  You securely share your past 24 months of fee statements. We examine them and send you a PDF summary savings report within 7 business days.
-                </dd>
-              </div>
-              <div className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-5 shadow-md">
-                <dt className="font-semibold text-slate-900">Is my data safe?</dt>
-                <dd className="mt-2 text-sm text-slate-600">
-                  Yes. Your bank fee data is safe with us. Bank fee statements and pricing agreement only contain the treasury services you are using and the price you pay for them — no vendor or customer details are ever shared.
-                </dd>
-              </div>
-              <div className="rounded-3xl border border-slate-200/70 bg-white/90 px-6 py-5 shadow-md">
-                <dt className="font-semibold text-slate-900">When will the SaaS be ready?</dt>
-                <dd className="mt-2 text-sm text-slate-600">
-                  Early adopters will get priority access in 2026. FeeLens AI is in active development.
-                </dd>
-              </div>
-            </dl>
-          </div>
-        </section>
+        <HeroSection image={dashboardImage} />
+        <ContextSection image={complexEnvImage} />
+        <SolutionSection />
+        <AuditSection subscribed={subscribed} />
+        <FaqSection />
       </main>
-
-      {/* Footer */}
-      <footer className="relative z-10 mt-24 border-t border-white/20 bg-white/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-slate-500 md:flex-row">
-          <span className="font-medium text-slate-700">© {new Date().getFullYear()} FeeLens</span>
-          <p>Founder: Background with 8+ years of experience in corporate treasury & banking audits.</p>
-          <p>
-            Contact:{" "}
-            <a href="mailto:support@feelens.us" className="font-medium text-emerald-600 transition hover:text-emerald-500">
-              support@feelens.us
-            </a>
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
