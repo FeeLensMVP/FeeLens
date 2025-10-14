@@ -1,15 +1,14 @@
+// Fichier : src/app/upload/page.tsx
+
 "use client";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageBackground from "@/components/PageBackground";
 import { useState } from "react";
-import Link from "next/link";
-// On importe depuis notre nouveau fichier utilitaire, comme le recommande la nouvelle doc
 import { UploadDropzone } from "@/utils/uploadthing";
 import { File, Loader2 } from "lucide-react";
 
-// On définit un type plus précis pour les fichiers uploadés
 type UploadedFile = {
   key: string;
   name: string;
@@ -41,7 +40,7 @@ export default function UploadPage() {
 
       if (!response.ok) throw new Error("Submission failed. Please try again.");
       
-      setIsComplete(true); // Affiche le message de succès
+      setIsComplete(true);
     } catch (error: any) {
       console.error(error);
       alert(error.message);
@@ -50,10 +49,8 @@ export default function UploadPage() {
     }
   };
   
-  // Le formulaire n'est valide que si tous les champs sont remplis ET au moins un fichier est uploadé.
   const isFormValid = formData.name && formData.company && formData.email && uploadedFiles.length > 0;
 
-  // Si le formulaire est soumis avec succès, on affiche un message de remerciement.
   if (isComplete) {
     return (
       <div className="relative overflow-hidden bg-[radial-gradient(circle_at_top,_#0A1F44_0%,_#071635_45%,_#0D2B6C_70%,_#0F2250_85%,_white_100%)] text-white">
@@ -74,30 +71,53 @@ export default function UploadPage() {
       <Header />
       <main className="flex flex-grow flex-col items-center px-4 py-16 sm:py-24">
         <form onSubmit={handleSubmit} className="w-full max-w-2xl space-y-8">
-          {/* Étape 1: Informations */}
+          {/* Step 1: Your Information */}
           <div>
             <h2 className="text-2xl font-semibold">Step 1: Your Information</h2>
             <div className="mt-4 space-y-4">
-              <input type="text" name="name" placeholder="Full Name" onChange={handleInputChange} required className="w-full rounded-md border-white/20 bg-white/10 p-3 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
-              <input type="text" name="company" placeholder="Company Name" onChange={handleInputChange} required className="w-full rounded-md border-white/20 bg-white/10 p-3 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
-              <input type="email" name="email" placeholder="Work Email" onChange={handleInputChange} required className="w-full rounded-md border-white/20 bg-white/10 p-3 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+              <input value={formData.name} type="text" name="name" placeholder="Full Name" onChange={handleInputChange} required className="w-full rounded-md border-white/20 bg-white/10 p-3 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+              <input value={formData.company} type="text" name="company" placeholder="Company Name" onChange={handleInputChange} required className="w-full rounded-md border-white/20 bg-white/10 p-3 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
+              <input value={formData.email} type="email" name="email" placeholder="Work Email" onChange={handleInputChange} required className="w-full rounded-md border-white/20 bg-white/10 p-3 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300" />
             </div>
           </div>
           
-          {/* Étape 2: Upload des Fichiers */}
+          {/* Step 2: Upload Statements */}
           <div>
             <h2 className="text-2xl font-semibold">Step 2: Upload Statements</h2>
             <div className="mt-4 rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm">
-              <UploadDropzone
-                endpoint="statementUploader"
-                onClientUploadComplete={(res) => {
-                  if (res) {
-                    setUploadedFiles((prevFiles) => [...prevFiles, ...res]);
-                  }
-                }}
-                onUploadError={(error: Error) => alert(`Upload Failed: ${error.message}`)}
-                appearance={{ container: { padding: "1rem", border: "none" }, uploadIcon: { width: "48px" }, label: { color: "#a7bde8" } }}
-              />
+              {formData.company ? (
+                <UploadDropzone
+                  endpoint="statementUploader"
+                  input={{ companyName: formData.company }}
+                  onClientUploadComplete={(res) => {
+                    if (res) {
+                      setUploadedFiles((prevFiles) => [...prevFiles, ...res]);
+                    }
+                  }}
+                  onUploadError={(error: Error) => alert(`Upload Failed: ${error.message}`)}
+                  
+                  // --- MODIFICATION ICI ---
+                  appearance={{
+                    container: { padding: "1rem", border: "none" },
+                    uploadIcon: { width: "48px" },
+                    label: { color: "#a7bde8" },
+                    // On cible spécifiquement le bouton
+                    button: `
+                      w-full mt-4 rounded-md px-4 py-2 text-base font-semibold text-white
+                      bg-gradient-to-r from-emerald-600 to-sky-600
+                      hover:from-emerald-700 hover:to-sky-700
+                      transition-all duration-300
+                      ut-uploading:cursor-not-allowed
+                      ut-uploading:bg-slate-500
+                      ut-uploading:after:bg-emerald-500
+                    `,
+                  }}
+                />
+              ) : (
+                <div className="flex h-32 flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-500 text-center">
+                  <p className="text-slate-400">Please enter a company name first.</p>
+                </div>
+              )}
               {uploadedFiles.length > 0 && (
                 <div className="mt-4 text-left">
                   <h3 className="font-semibold">Uploaded files:</h3>
@@ -114,7 +134,7 @@ export default function UploadPage() {
             </div>
           </div>
 
-          {/* Étape 3: Soumission */}
+          {/* Step 3: Submission */}
           <div>
             <button
               type="submit"
