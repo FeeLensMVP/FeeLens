@@ -1,8 +1,8 @@
 export const NAV_LINKS = [
-  { href: "#context", label: "Context" },
-  { href: "#solution", label: "Solution" },
-  { href: "#audit", label: "Free Audit" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/", label: "Home" },
+  { href: "/upload", label: "Upload"},
+  { href: "/faq", label: "FAQ" },
+
 ];
 
 export const FAQ_DATA = [
