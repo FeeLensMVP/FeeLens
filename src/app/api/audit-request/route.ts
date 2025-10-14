@@ -1,69 +1,31 @@
-import { NextRequest, NextResponse } from "next/server";
+// src/app/api/audit-request/route.ts
 
-type FormFields = {
-  company: string;
-  email: string;
-};
+import { NextResponse } from "next/server";
 
-const FORM_ENDPOINT =
-  process.env.FORMSPREE_FORM_ENDPOINT ?? "https://formspree.io/f/xnngpygq";
-
-function validateFields(formData: FormData): FormFields | null {
-  const company = String(formData.get("company") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim();
-
-  if (!company || !email) {
-    return null;
-  }
-
-  return { company, email };
-}
-
-export async function POST(request: NextRequest) {
-  const formData = await request.formData();
-  const fields = validateFields(formData);
-
-  if (!fields) {
-    return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
-  }
-
-  if (!FORM_ENDPOINT) {
-    console.error("FORMSPREE_FORM_ENDPOINT is not configured.");
-    return NextResponse.json({ error: "Form endpoint not configured." }, { status: 500 });
-  }
-
+export async function POST(request: Request) {
   try {
-    const formspreeResponse = await fetch(FORM_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(fields),
-    });
+    const body = await request.json();
+    const { name, company, email, files } = body;
 
-    if (!formspreeResponse.ok) {
-      const errorBody = await formspreeResponse.text().catch(() => "");
-      console.error(
-        `Formspree request failed with status ${formspreeResponse.status}: ${errorBody}`,
-      );
-      return NextResponse.json(
-        { error: "Unable to submit your request right now. Please try again later." },
-        { status: 502 },
-      );
-    }
+    // --- C'EST ICI QUE VOUS METTREZ VOTRE LOGIQUE BACKEND ---
+    // 1. Valider les données (s'assurer que rien ne manque).
+    // 2. Créer une nouvelle entrée dans votre base de données (ex: une table "Audits").
+    // 3. Associer le nom, l'entreprise, l'email et la liste des URLs de fichiers à cette entrée.
+    // 4. Envoyer un email de notification à vous-même et/ou un accusé de réception au client.
+    // ---------------------------------------------------------
+
+    // Pour l'instant, on affiche juste les données dans la console du serveur pour vérifier.
+    console.log("--- NOUVELLE DEMANDE D'AUDIT ---");
+    console.log("Nom:", name);
+    console.log("Entreprise:", company);
+    console.log("Email:", email);
+    console.log("Fichiers:", files.map((f: any) => f.name).join(", "));
+    console.log("---------------------------------");
+
+    return NextResponse.json({ success: true, message: "Audit request received." });
+
   } catch (error) {
-    console.error("Formspree request failed", error);
-    return NextResponse.json(
-      { error: "Unexpected error submitting your request." },
-      { status: 500 },
-    );
+    console.error("Erreur lors de la soumission de l'audit:", error);
+    return NextResponse.json({ success: false, message: "An error occurred." }, { status: 500 });
   }
-
-  const redirectUrl = request.nextUrl.clone();
-  redirectUrl.pathname = "/";
-  redirectUrl.searchParams.set("subscribed", "1");
-  redirectUrl.hash = "audit";
-
-  return NextResponse.redirect(redirectUrl, { status: 303 });
 }

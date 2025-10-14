@@ -1,39 +1,37 @@
 // src/app/api/uploadthing/core.ts
 
 import { createUploadthing, type FileRouter } from "uploadthing/next";
+import { UploadThingError } from "uploadthing/server";
 
 const f = createUploadthing();
 
-// Simule une authentification - à remplacer par votre vraie logique utilisateur plus tard
-const auth = (req: Request) => ({ id: "fake-user-id" }); 
+const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
 
-// FileRouter pour votre application, peut contenir plusieurs FileRoutes
+// CORRECTION : On définit les règles une seule fois pour les réutiliser
+const statementUploadConfig = {
+  maxFileSize: "16MB" as const,
+  maxFileCount: 50, // On met la limite ici
+};
+
+// FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
-  // Définissez une route pour l'upload, donnez-lui un nom parlant
-  statementUploader: f({ 
-    // Types de fichiers autorisés
-    pdf: { maxFileSize: "16MB" },
-    "text/csv": { maxFileSize: "16MB" },
-    "application/vnd.ms-excel": { maxFileSize: "16MB" }, // .xls
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { maxFileSize: "16MB" }, // .xlsx
+  // On nomme la route comme avant
+  statementUploader: f({
+    // CORRECTION : On applique la configuration à chaque type de fichier autorisé
+    pdf: statementUploadConfig,
+    "text/csv": statementUploadConfig,
+    "application/vnd.ms-excel": statementUploadConfig,
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": statementUploadConfig,
   })
-    // Mettez en place des permissions et une logique qui s'exécute AVANT l'upload
     .middleware(async ({ req }) => {
-      // Ce code s'exécute sur votre serveur avant l'upload
-      const user = auth(req);
-
-      // Si l'utilisateur n'est pas authentifié, on lève une erreur
-      if (!user) throw new Error("Unauthorized");
-
-      // Tout ce qui est retourné ici est disponible dans onUploadComplete
+      const user = await auth(req);
+      if (!user) throw new UploadThingError("Unauthorized");
       return { userId: user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      // Ce code s'exécute sur votre serveur APRÈS l'upload
       console.log("Upload complete for userId:", metadata.userId);
       console.log("file url", file.url);
-      
-      // !!! C'est ici que vous sauvegarderiez l'URL du fichier dans votre base de données !!!
+      return { uploadedBy: metadata.userId };
     }),
 } satisfies FileRouter;
 
