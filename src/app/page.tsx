@@ -3,7 +3,6 @@ import HeroSection from "@/components/HeroSection";
 import ContextSection from "@/components/ContextSection";
 import SolutionSection from "@/components/SolutionSection";
 import AuditSection from "@/components/AuditSection";
-import FaqSection from "@/components/FaqSection";
 import Footer from "@/components/Footer";
 import PageBackground from "@/components/PageBackground"; // On importe le nouveau composant
 import dashboardImage from "@/assets/images/FeeLens-dashboard.png";
