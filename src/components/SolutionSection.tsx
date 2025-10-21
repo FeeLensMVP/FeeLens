@@ -15,7 +15,7 @@ export default function SolutionSection() {
 
       <div className="mx-auto max-w-6xl rounded-[44px] border border-emerald-200/50 bg-white/80 px-8 py-16 shadow-[0_60px_120px_-50px_rgba(14,116,144,0.35)] backdrop-blur">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="mt-5 text-3xl font-bold tracking-tight text-slate-900">Be the CFO's hero.</h2>
+          <h2 className="mt-5 text-3xl font-bold tracking-tight text-slate-900">Be the CFO&aposs hero.</h2>
           <p className="mt-4 text-base text-slate-600">
             EY reports that companies reconciling bank fees save 20-30% annually.
           </p>

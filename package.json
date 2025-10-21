@@ -7,7 +7,10 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test"
+    "test": "node --test",
+    "check-build": "echo '🔍 Vérification du build...' && npm run build && echo '✅ Build réussi! L'app est prête pour la production.'",
+    "verify": "echo '🔍 Vérification complète avant production...' && npm run lint && echo '✅ Lint OK' && npm run test && echo '✅ Tests OK' && npm run build && echo '✅ Build OK' && echo '🎉 L'application est prête pour la production!'",
+    "prebuild": "npm run lint"
   },
   "dependencies": {
     "@react-email/components": "^0.5.6",

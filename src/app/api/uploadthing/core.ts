@@ -4,14 +4,17 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { slugify } from "transliteration";
 import { z } from "zod";
+// On importe l'API d'UploadThing pour pouvoir renommer les fichiers
+import { UTApi } from "uploadthing/server";
 
+// On initialise l'API
+const utapi = new UTApi();
 const f = createUploadthing();
 
 const auth = (req: Request) => ({ id: "fakeId" });
 
 export const ourFileRouter = {
   statementUploader: f({
-    // On définit ici tous les types de fichiers autorisés
     pdf: { maxFileSize: "16MB", maxFileCount: 50 },
     "text/csv": { maxFileSize: "16MB", maxFileCount: 50 },
     "application/vnd.ms-excel": { maxFileSize: "16MB", maxFileCount: 50 },
@@ -23,32 +26,40 @@ export const ourFileRouter = {
       if (!user) throw new UploadThingError("Non autorisé");
 
       const { companyName } = input;
-      
-      // CORRECTION : L'option s'appelle 'lowercase', pas 'lower'
-      const folderName = slugify(companyName, { lowercase: true, separator: '-' });
+      // On nettoie le nom de l'entreprise pour l'utiliser dans le nom de fichier
+      const cleanCompanyName = slugify(companyName, { lowercase: true, separator: '_' });
 
-      // On retourne le nom du dossier pour l'utiliser à l'étape suivante
-      return { userId: user.id, folderName };
+      return { userId: user.id, cleanCompanyName };
     })
-    // --- C'EST ICI QUE LA VRAIE SOLUTION SE TROUVE ---
-    // La fonction 'key' est une propriété de la configuration de la route 'f'
-    // Elle s'exécute après le middleware et définit le chemin du fichier
+    // La fonction onUploadComplete s'exécute sur le serveur APRÈS l'upload
     .onUploadComplete(async ({ metadata, file }) => {
-      // Pour réellement contrôler le chemin, il faut le faire au niveau du stockage
-      // UploadThing utilise un système de clés uniques. Pour organiser les fichiers,
-      // la meilleure pratique est de préfixer la clé avec le nom du dossier.
-      // NOTE : La documentation d'UploadThing est ambiguë sur la personnalisation dynamique
-      // du chemin de stockage directement. La méthode la plus robuste est de gérer
-      // cette organisation dans votre base de données après l'upload.
+      
+      // --- C'EST ICI QUE LA MAGIE OPÈRE ---
+      
+      // 1. On nettoie le nom original du fichier
+      const originalFileName = file.name.substring(0, file.name.lastIndexOf('.'));
+      const fileExtension = file.name.substring(file.name.lastIndexOf('.'));
+      const cleanOriginalFileName = slugify(originalFileName, { lowercase: true, separator: '_' });
 
-      // CEPENDANT, on peut manipuler le nom du fichier dans les métadonnées pour l'utiliser plus tard.
-      const path = `${metadata.folderName}/${file.name}`;
-      console.log(`Fichier uploadé virtuellement à : ${path}`);
-      console.log("URL de stockage réelle:", file.url);
+      // 2. On construit le nouveau nom de fichier final
+      // ex: "ma_belle_entreprise_releve_janvier.pdf"
+      const newFileName = `${metadata.cleanCompanyName}_${cleanOriginalFileName}${fileExtension}`;
+
+      // 3. On commande à UploadThing de renommer le fichier
+      try {
+        await utapi.renameFiles({
+          fileKey: file.key, // La clé unique du fichier qui vient d'être uploadé
+          newName: newFileName,
+        });
+        console.log(`Fichier renommé avec succès en : ${newFileName}`);
+      } catch (error) {
+        console.error("Erreur lors du renommage du fichier:", error);
+        // Vous pourriez vouloir gérer cette erreur (par ex. en supprimant le fichier)
+      }
       
-      // Ici, vous enregistreriez 'path' et 'file.url' dans votre base de données.
-      
-      return { uploadedBy: metadata.userId, path: path };
+      // ------------------------------------
+
+      return { uploadedBy: metadata.userId };
     }),
 } satisfies FileRouter;
 
