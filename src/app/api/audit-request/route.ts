@@ -8,11 +8,14 @@ import { NotificationEmail } from "../../../emails/NotificationEmail";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // --- CONFIGURATION IMPORTANTE ---
-// Remplacez 'feelens.us' par votre domaine VÉRIFIÉ sur Resend.
+// Domaine vérifié sur Resend : feelens.us
 // 'noreply@' est une convention standard, mais vous pouvez utiliser 'support@', etc.
-const FROM_EMAIL = 'FeeLens <noreply@revy-analyse.fr>'; 
-// Remplacez par l'email où VOUS voulez recevoir les notifications.
-const ADMIN_EMAIL = 'canler.maxence@gmail.com'; 
+const FROM_EMAIL = 'FeeLens <noreply@feelens.us>'; 
+// Emails où VOUS voulez recevoir les notifications (vous pouvez en ajouter autant que nécessaire)
+const ADMIN_EMAILS = [
+  'canler.maxence@gmail.com',
+  'maxence.canler@feelens.us', // Ajoutez d'autres emails ici
+]; 
 // --------------------------------
 
 export async function POST(request: Request) {
@@ -26,13 +29,13 @@ export async function POST(request: Request) {
       resend.emails.send({
         from: FROM_EMAIL,
         to: email, // L'email du CFO
-        subject: `Your Audit Request for ${company}`,
+        subject: 'Your FeeLens audit is underway',
         react: ConfirmationEmail({ name, company }),
       }),
-      // 2. Envoyer l'email de notification à vous-même
+      // 2. Envoyer l'email de notification à vos adresses admin
       resend.emails.send({
         from: FROM_EMAIL,
-        to: ADMIN_EMAIL, // Votre email
+        to: ADMIN_EMAILS, // Tous vos emails admin
         subject: `New Audit Request from ${company}`,
         react: NotificationEmail({ name, company, email, fileCount: files.length }),
       })
