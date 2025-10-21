@@ -10,7 +10,7 @@ export default function FaqSection() {
           {FAQ_DATA.map((item) => (
             <Card key={item.question}>
               <dt className="font-semibold text-slate-900">{item.question}</dt>
-              <dd className="mt-2 text-sm text-slate-600">{item.answer}</dd>
+              <dd className="mt-2 text-sm text-slate-600 whitespace-pre-line">{item.answer}</dd>
             </Card>
           ))}
         </dl>
