@@ -187,7 +187,7 @@ function buildIndex<T extends { serviceName: string; afpCode?: string | null }>(
   const byAfp = new Map<string, T>();
   for (const r of rows) {
     byName.set(r.serviceName.toLowerCase(), r);
-    const code = (r as any).afpCode as string | null | undefined;
+    const code = r.afpCode;
     if (code) byAfp.set(code.toLowerCase(), r);
   }
   return { byName, byAfp };

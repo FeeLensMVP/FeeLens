@@ -1,8 +1,5 @@
 // src/components/PageBackground.tsx
 
-import Image from "next/image";
-import logoWatermark from "@/assets/logo.png";
-
 export default function PageBackground() {
   return (
     // CORRECTION : On ajoute un conteneur parent.

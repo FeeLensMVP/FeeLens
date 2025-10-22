@@ -113,7 +113,7 @@ export default function SolutionSection() {
                 <div className="mt-1 text-sm text-slate-600">Average savings per client</div>
               </div>
               <div className="text-center border-l border-r border-slate-200/50">
-                <div className="text-3xl font-bold text-emerald-600">7 days</div>
+                <div className="text-3xl font-bold text-emerald-600">7 business days</div>
                 <div className="mt-1 text-sm text-slate-600">Typical audit turnaround</div>
               </div>
               <div className="text-center">

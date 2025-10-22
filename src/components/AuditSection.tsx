@@ -49,7 +49,7 @@ export default function AuditSection({ subscribed }: AuditSectionProps) {
               transition={{ delay: 0.2 }}
             >
               Bank fee analysis shouldn&apos;t be such a headache. Let us handle it for you. 
-              Upload your statements and get your savings report in 7 days.
+              Upload your statements and get your savings report in 7 business days.
             </motion.p>
 
             {/* CTA Buttons */}

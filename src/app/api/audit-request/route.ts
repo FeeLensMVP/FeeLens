@@ -13,7 +13,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = 'FeeLens <noreply@feelens.us>'; 
 // Emails où VOUS voulez recevoir les notifications (vous pouvez en ajouter autant que nécessaire)
 const ADMIN_EMAILS = [
-  'canler.maxence@gmail.com',
+  'clement.gonzalez@feelens.us',
   'maxence.canler@feelens.us', // Ajoutez d'autres emails ici
 ]; 
 // --------------------------------
@@ -21,7 +21,7 @@ const ADMIN_EMAILS = [
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, company, email, files } = body;
+    const { name, company, email, statements, pricing } = body;
 
     // Utilise Promise.all pour envoyer les deux emails en parallèle
     const [confirmationData, notificationData] = await Promise.all([
@@ -32,13 +32,19 @@ export async function POST(request: Request) {
         subject: 'Your FeeLens audit is underway',
         react: ConfirmationEmail({ name, company }),
       }),
-      // 2. Envoyer l'email de notification à vos adresses admin
-      resend.emails.send({
-        from: FROM_EMAIL,
-        to: ADMIN_EMAILS, // Tous vos emails admin
-        subject: `New Audit Request from ${company}`,
-        react: NotificationEmail({ name, company, email, fileCount: files.length }),
-      })
+          // 2. Envoyer l'email de notification à vos adresses admin
+          resend.emails.send({
+            from: FROM_EMAIL,
+            to: ADMIN_EMAILS, // Tous vos emails admin
+            subject: `New Audit Request from ${company}`,
+            react: NotificationEmail({ 
+              name, 
+              company, 
+              email, 
+              statementCount: statements?.length || 0,
+              pricingCount: pricing?.length || 0 
+            }),
+          })
     ]);
 
     // Vérifie si l'une des deux requêtes a échoué

@@ -11,25 +11,26 @@ import { UTApi } from "uploadthing/server";
 const utapi = new UTApi();
 const f = createUploadthing();
 
-const auth = (req: Request) => ({ id: "fakeId" });
+const auth = () => ({ id: "fakeId" });
 
 export const ourFileRouter = {
   statementUploader: f({
     pdf: { maxFileSize: "16MB", maxFileCount: 50 },
     "text/csv": { maxFileSize: "16MB", maxFileCount: 50 },
-    "application/vnd.ms-excel": { maxFileSize: "16MB", maxFileCount: 50 },
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { maxFileSize: "16MB", maxFileCount: 50 },
   })
-    .input(z.object({ companyName: z.string() }))
-    .middleware(async ({ req, input }) => {
-      const user = await auth(req);
+    .input(z.object({ 
+      companyName: z.string(),
+      documentType: z.enum(['statement', 'pricing']).optional()
+    }))
+    .middleware(async ({ input }) => {
+      const user = await auth();
       if (!user) throw new UploadThingError("Non autorisé");
 
-      const { companyName } = input;
+      const { companyName, documentType } = input;
       // On nettoie le nom de l'entreprise pour l'utiliser dans le nom de fichier
       const cleanCompanyName = slugify(companyName, { lowercase: true, separator: '_' });
 
-      return { userId: user.id, cleanCompanyName };
+      return { userId: user.id, cleanCompanyName, documentType };
     })
     // La fonction onUploadComplete s'exécute sur le serveur APRÈS l'upload
     .onUploadComplete(async ({ metadata, file }) => {
@@ -42,8 +43,9 @@ export const ourFileRouter = {
       const cleanOriginalFileName = slugify(originalFileName, { lowercase: true, separator: '_' });
 
       // 2. On construit le nouveau nom de fichier final
-      // ex: "ma_belle_entreprise_releve_janvier.pdf"
-      const newFileName = `${metadata.cleanCompanyName}_${cleanOriginalFileName}${fileExtension}`;
+      // ex: "ma_belle_entreprise_statement_janvier.pdf" ou "ma_belle_entreprise_pricing_agreement.pdf"
+      const documentTypeSuffix = metadata.documentType === 'pricing' ? 'pricing_agreement' : 'statement';
+      const newFileName = `${metadata.cleanCompanyName}_${documentTypeSuffix}_${cleanOriginalFileName}${fileExtension}`;
 
       // 3. On commande à UploadThing de renommer le fichier
       try {

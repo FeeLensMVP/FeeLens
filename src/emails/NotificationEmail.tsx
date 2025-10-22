@@ -15,10 +15,11 @@ interface NotificationEmailProps {
   name: string;
   company: string;
   email: string;
-  fileCount: number;
+  statementCount: number;
+  pricingCount: number;
 }
 
-export const NotificationEmail = ({ name, company, email, fileCount }: NotificationEmailProps) => (
+export const NotificationEmail = ({ name, company, email, statementCount, pricingCount }: NotificationEmailProps) => (
   <Html>
     <Head />
     <Preview>New Audit Request: {company}</Preview>
@@ -30,9 +31,9 @@ export const NotificationEmail = ({ name, company, email, fileCount }: Notificat
           <div style={badge}>Action Required</div>
         </div>
         
-        <Text style={intro}>
-          A new client has submitted their bank fee audit request. Review the details below:
-        </Text>
+            <Text style={intro}>
+              A new client has submitted their bank fee audit request with statements and pricing agreement (PDF & CSV files). Review the details below:
+            </Text>
 
         {/* Card avec les détails */}
         <div style={detailsCard}>
@@ -48,10 +49,14 @@ export const NotificationEmail = ({ name, company, email, fileCount }: Notificat
             <span style={label}>Email</span>
             <span style={valueEmail}>{email}</span>
           </div>
-          <div style={detailRow}>
-            <span style={label}>Files Uploaded</span>
-            <span style={valueHighlight}>{fileCount} file{fileCount > 1 ? 's' : ''}</span>
-          </div>
+              <div style={detailRow}>
+                <span style={label}>Bank Statements</span>
+                <span style={valueHighlight}>{statementCount} file{statementCount !== 1 ? 's' : ''}</span>
+              </div>
+              <div style={detailRow}>
+                <span style={label}>Pricing Agreement</span>
+                <span style={valueHighlight}>{pricingCount} file{pricingCount !== 1 ? 's' : ''}</span>
+              </div>
         </div>
 
         {/* Action button */}

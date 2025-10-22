@@ -68,7 +68,7 @@ export default function Header() {
 
         {/* Desktop CTA */}
         <Link
-          href="/upload"
+          href="/#audit"
           className="
             hidden lg:inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-sky-500 
             px-6 py-3 text-sm font-bold text-white shadow-xl shadow-emerald-500/25
@@ -157,7 +157,7 @@ export default function Header() {
                 transition={{ delay: 0.3 }}
               >
                 <Link
-                  href="/upload"
+                  href="/#audit"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-sky-500 px-6 py-4 text-white font-bold shadow-lg shadow-emerald-500/25 transition-all hover:scale-[1.02]"
                 >
