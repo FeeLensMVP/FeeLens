@@ -7,14 +7,25 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test"
+    "test": "node --test",
+    "check-build": "echo '🔍 Vérification du build...' && npm run build && echo '✅ Build réussi! L'app est prête pour la production.'",
+    "verify": "echo '🔍 Vérification complète avant production...' && npm run lint && echo '✅ Lint OK' && npm run test && echo '✅ Tests OK' && npm run build && echo '✅ Build OK' && echo '🎉 L'application est prête pour la production!'",
+    "prebuild": "npm run lint"
   },
   "dependencies": {
+    "@react-email/components": "^0.5.6",
     "@react-email/render": "^1.3.1",
+    "@uploadthing/react": "^7.3.3",
+    "framer-motion": "^12.23.24",
+    "lucide-react": "^0.545.0",
     "next": "15.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "resend": "^6.1.0"
+    "react-email": "^4.3.0",
+    "resend": "^6.1.3",
+    "transliteration": "^2.3.5",
+    "uploadthing": "^7.7.4",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -22,9 +33,11 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
-    "tailwindcss": "^4",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.14",
     "typescript": "^5"
   }
 }

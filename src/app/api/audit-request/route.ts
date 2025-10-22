@@ -1,69 +1,76 @@
-import { NextRequest, NextResponse } from "next/server";
+// Fichier : src/app/api/audit-request/route.ts
 
-type FormFields = {
-  company: string;
-  email: string;
-};
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
+import { ConfirmationEmail } from "../../../emails/ConfirmationEmail";
+import { NotificationEmail } from "../../../emails/NotificationEmail";
 
-const FORM_ENDPOINT =
-  process.env.FORMSPREE_FORM_ENDPOINT ?? "https://formspree.io/f/xnngpygq";
+// Initialisation conditionnelle de Resend pour éviter les erreurs de build
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
-function validateFields(formData: FormData): FormFields | null {
-  const company = String(formData.get("company") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim();
+// --- CONFIGURATION IMPORTANTE ---
+// Domaine vérifié sur Resend : feelens.us
+// 'noreply@' est une convention standard, mais vous pouvez utiliser 'support@', etc.
+const FROM_EMAIL = 'FeeLens <noreply@feelens.us>'; 
+// Emails où VOUS voulez recevoir les notifications (vous pouvez en ajouter autant que nécessaire)
+const ADMIN_EMAILS = [
+  'clement.gonzalez@feelens.us',
+  'maxence.canler@feelens.us', // Ajoutez d'autres emails ici
+]; 
+// --------------------------------
 
-  if (!company || !email) {
-    return null;
-  }
-
-  return { company, email };
-}
-
-export async function POST(request: NextRequest) {
-  const formData = await request.formData();
-  const fields = validateFields(formData);
-
-  if (!fields) {
-    return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
-  }
-
-  if (!FORM_ENDPOINT) {
-    console.error("FORMSPREE_FORM_ENDPOINT is not configured.");
-    return NextResponse.json({ error: "Form endpoint not configured." }, { status: 500 });
-  }
-
+export async function POST(request: Request) {
   try {
-    const formspreeResponse = await fetch(FORM_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(fields),
-    });
-
-    if (!formspreeResponse.ok) {
-      const errorBody = await formspreeResponse.text().catch(() => "");
-      console.error(
-        `Formspree request failed with status ${formspreeResponse.status}: ${errorBody}`,
-      );
-      return NextResponse.json(
-        { error: "Unable to submit your request right now. Please try again later." },
-        { status: 502 },
-      );
+    // Vérifier que Resend est configuré
+    if (!resend) {
+      console.error("RESEND_API_KEY is not configured");
+      return NextResponse.json({ success: false, message: "Email service not configured." }, { status: 500 });
     }
+
+    const body = await request.json();
+    const { name, company, email, statements, pricing } = body;
+
+    // Utilise Promise.all pour envoyer les deux emails en parallèle
+    const [confirmationData, notificationData] = await Promise.all([
+      // 1. Envoyer l'email de confirmation au CFO
+      resend.emails.send({
+        from: FROM_EMAIL,
+        to: email, // L'email du CFO
+        subject: 'Your FeeLens audit is underway',
+        react: ConfirmationEmail({ name, company }),
+      }),
+          // 2. Envoyer l'email de notification à vos adresses admin
+          resend.emails.send({
+            from: FROM_EMAIL,
+            to: ADMIN_EMAILS, // Tous vos emails admin
+            subject: `New Audit Request from ${company}`,
+            react: NotificationEmail({ 
+              name, 
+              company, 
+              email, 
+              statementCount: statements?.length || 0,
+              pricingCount: pricing?.length || 0 
+            }),
+          })
+    ]);
+
+    // Vérifie si l'une des deux requêtes a échoué
+    if (confirmationData.error) {
+      console.error("Erreur lors de l'envoi de l'email de confirmation:", confirmationData.error);
+      throw new Error("Failed to send confirmation email.");
+    }
+    if (notificationData.error) {
+      console.error("Erreur lors de l'envoi de l'email de notification:", notificationData.error);
+      throw new Error("Failed to send notification email.");
+    }
+
+    console.log("--- EMAILS ENVOYÉS AVEC SUCCÈS ---");
+
+    return NextResponse.json({ success: true, message: "Demande d'audit bien reçue." });
+
   } catch (error) {
-    console.error("Formspree request failed", error);
-    return NextResponse.json(
-      { error: "Unexpected error submitting your request." },
-      { status: 500 },
-    );
+    console.error("Erreur dans /api/audit-request:", error);
+    // On retourne un message d'erreur plus clair au client
+    return NextResponse.json({ success: false, message: "An error occurred while sending emails." }, { status: 500 });
   }
-
-  const redirectUrl = request.nextUrl.clone();
-  redirectUrl.pathname = "/";
-  redirectUrl.searchParams.set("subscribed", "1");
-  redirectUrl.hash = "audit";
-
-  return NextResponse.redirect(redirectUrl, { status: 303 });
 }
