@@ -5,7 +5,8 @@ import { Resend } from "resend";
 import { ConfirmationEmail } from "../../../emails/ConfirmationEmail";
 import { NotificationEmail } from "../../../emails/NotificationEmail";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialisation conditionnelle de Resend pour éviter les erreurs de build
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 // --- CONFIGURATION IMPORTANTE ---
 // Domaine vérifié sur Resend : feelens.us
@@ -20,6 +21,12 @@ const ADMIN_EMAILS = [
 
 export async function POST(request: Request) {
   try {
+    // Vérifier que Resend est configuré
+    if (!resend) {
+      console.error("RESEND_API_KEY is not configured");
+      return NextResponse.json({ success: false, message: "Email service not configured." }, { status: 500 });
+    }
+
     const body = await request.json();
     const { name, company, email, statements, pricing } = body;
 
