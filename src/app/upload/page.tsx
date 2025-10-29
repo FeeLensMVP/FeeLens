@@ -7,7 +7,6 @@ import Footer from "@/components/Footer";
 import PageBackground from "@/components/PageBackground";
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { UploadDropzone } from "@/utils/uploadthing";
 import { File, Loader2, CheckCircle, ArrowLeft, ArrowRight, Upload, X, Eye } from "lucide-react";
 
 type UploadedFile = {
@@ -16,11 +15,6 @@ type UploadedFile = {
   url: string;
   size: number;
   type: 'statement' | 'pricing';
-};
-
-type UploadInput = {
-  companyName: string;
-  documentType: 'statement' | 'pricing';
 };
 
 type SelectedFile = {

@@ -36,8 +36,7 @@ export async function POST(request: Request) {
       fileName,
       companyName,
       fileType,
-      sessionId,
-      null // Pas de timestamp
+      sessionId
     );
 
     console.log(`✅ Transfert réussi: ${dropboxFile.url}`);

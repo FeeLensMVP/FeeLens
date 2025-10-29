@@ -17,7 +17,7 @@ export interface DropboxFile {
 
 export class DropboxService {
   // Créer un dossier pour une entreprise avec sous-dossiers par type
-  static async createCompanyFolder(companyName: string, fileType: 'statements' | 'pricing', sessionId?: string, timestamp?: string): Promise<string> {
+  static async createCompanyFolder(companyName: string, fileType: 'statements' | 'pricing', sessionId?: string): Promise<string> {
     try {
       // Utiliser exactement le sessionId reçu, pas de génération aléatoire
       if (!sessionId) {
@@ -38,8 +38,11 @@ export class DropboxService {
           autorename: false,
         });
         console.log(`Dossier entreprise créé: ${baseFolderPath}`);
-      } catch (error: any) {
-        if (!error.error?.error_summary?.includes('path/conflict/folder/')) {
+      } catch (error: unknown) {
+        if (error && typeof error === 'object' && 'error' in error && 
+            typeof error.error === 'object' && error.error && 'error_summary' in error.error &&
+            typeof error.error.error_summary === 'string' && 
+            !error.error.error_summary.includes('path/conflict/folder/')) {
           throw error;
         }
         console.log(`Dossier entreprise existe déjà: ${baseFolderPath}`);
@@ -52,8 +55,11 @@ export class DropboxService {
           autorename: false,
         });
         console.log(`Dossier type créé: ${folderPath}`);
-      } catch (error: any) {
-        if (!error.error?.error_summary?.includes('path/conflict/folder/')) {
+      } catch (error: unknown) {
+        if (error && typeof error === 'object' && 'error' in error && 
+            typeof error.error === 'object' && error.error && 'error_summary' in error.error &&
+            typeof error.error.error_summary === 'string' && 
+            !error.error.error_summary.includes('path/conflict/folder/')) {
           throw error;
         }
         console.log(`Dossier type existe déjà: ${folderPath}`);
@@ -79,7 +85,7 @@ export class DropboxService {
       const response = await dbx.filesUpload({
         path: filePath,
         contents: fileBuffer,
-        mode: 'overwrite',
+        mode: { '.tag': 'overwrite' },
         autorename: true,
       });
 
@@ -87,7 +93,7 @@ export class DropboxService {
       const shareResponse = await dbx.sharingCreateSharedLinkWithSettings({
         path: filePath,
         settings: {
-          requested_visibility: 'public',
+          requested_visibility: { '.tag': 'public' },
         },
       });
 
@@ -111,8 +117,7 @@ export class DropboxService {
     fileName: string,
     companyName: string,
     fileType: 'statements' | 'pricing',
-    sessionId?: string,
-    timestamp?: string
+    sessionId?: string
   ): Promise<DropboxFile> {
     try {
       console.log(`=== DÉBUT DU TRANSFERT DROPBOX ===`);
@@ -120,7 +125,6 @@ export class DropboxService {
       console.log(`Entreprise: ${companyName}`);
       console.log(`Type: ${fileType}`);
       console.log(`Session ID: ${sessionId || 'Nouveau'}`);
-      console.log(`Timestamp: ${timestamp || 'Nouveau'}`);
       console.log(`Taille: ${fileBuffer.length} bytes`);
       
       // Vérifier les variables d'environnement
@@ -132,7 +136,7 @@ export class DropboxService {
       
       // 1. Créer le dossier de l'entreprise avec sous-dossier par type
       console.log(`Étape 1: Création du dossier...`);
-      const folderPath = await this.createCompanyFolder(companyName, fileType, sessionId, timestamp);
+      const folderPath = await this.createCompanyFolder(companyName, fileType, sessionId);
       console.log(`Dossier: ${folderPath}`);
       
       // 2. Uploader le fichier
