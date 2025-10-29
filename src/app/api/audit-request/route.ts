@@ -30,6 +30,17 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, company, email, statements, pricing } = body;
 
+    // Validation de l'email côté serveur
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      return NextResponse.json({ success: false, message: "Invalid email address." }, { status: 400 });
+    }
+
+    // Validation des champs requis
+    if (!name || !company) {
+      return NextResponse.json({ success: false, message: "Name and company are required." }, { status: 400 });
+    }
+
     // Utilise Promise.all pour envoyer les deux emails en parallèle
     const [confirmationData, notificationData] = await Promise.all([
       // 1. Envoyer l'email de confirmation au CFO

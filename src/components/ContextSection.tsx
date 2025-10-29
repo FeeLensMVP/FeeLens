@@ -55,13 +55,7 @@ export default function ContextSection({ image }: ContextSectionProps) {
             transition={{ duration: 0.6 }}
           >
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-red-500/10 px-4 py-2 text-sm font-medium text-red-300 backdrop-blur-sm border border-red-500/20">
-                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                The Problem
-              </div>
-              <h2 className="mt-6 text-4xl font-bold tracking-tight text-white sm:text-5xl">
+              <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
                 A complex environment
               </h2>
               <p className="mt-4 text-lg text-blue-100/80">
@@ -112,17 +106,6 @@ export default function ContextSection({ image }: ContextSectionProps) {
                 className="relative w-full max-w-lg rounded-[24px] shadow-2xl shadow-red-500/20 ring-1 ring-white/10"
               />
               
-              {/* Warning badge */}
-              <div className="absolute -top-4 -right-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 backdrop-blur-md shadow-lg">
-                <div className="flex items-center gap-2">
-                  <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                  <div>
-                    <div className="text-xs font-semibold text-red-200">High Risk</div>
-                  </div>
-                </div>
-              </div>
             </div>
           </motion.div>
         </div>
