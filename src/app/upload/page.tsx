@@ -5,10 +5,9 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageBackground from "@/components/PageBackground";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
-import { UploadDropzone } from "@/utils/uploadthing";
-import { File, Loader2, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import { File, Loader2, CheckCircle, ArrowLeft, ArrowRight, Upload, X, Eye } from "lucide-react";
 
 type UploadedFile = {
   key: string;
@@ -18,9 +17,10 @@ type UploadedFile = {
   type: 'statement' | 'pricing';
 };
 
-type UploadInput = {
-  companyName: string;
-  documentType: 'statement' | 'pricing';
+type SelectedFile = {
+  file: File;
+  id: string;
+  preview?: string;
 };
 
 export default function UploadPage() {
@@ -31,9 +31,196 @@ export default function UploadPage() {
   const [isComplete, setIsComplete] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
 
+  // États pour les fichiers sélectionnés
+  const [selectedStatements, setSelectedStatements] = useState<SelectedFile[]>([]);
+  const [selectedPricing, setSelectedPricing] = useState<SelectedFile[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionTimestamp, setSessionTimestamp] = useState<string | null>(null);
+  
+  // Refs pour les inputs de fichiers
+  const statementInputRef = useRef<HTMLInputElement>(null);
+  const pricingInputRef = useRef<HTMLInputElement>(null);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Réinitialiser le sessionId et timestamp quand on change les infos de base
+    if (name === 'company' && (sessionId || sessionTimestamp)) {
+      setSessionId(null);
+      setSessionTimestamp(null);
+      localStorage.removeItem('feeLensSessionId');
+      localStorage.removeItem('feeLensSessionTimestamp');
+    }
+  };
+
+  // Fonction pour gérer la sélection de fichiers
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, type: 'statement' | 'pricing') => {
+    const files = Array.from(e.target.files || []);
+    const newFiles: SelectedFile[] = files.map(file => ({
+      file,
+      id: Math.random().toString(36).substr(2, 9),
+      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined
+    }));
+
+    if (type === 'statement') {
+      setSelectedStatements(prev => [...prev, ...newFiles]);
+    } else {
+      setSelectedPricing(prev => [...prev, ...newFiles]);
+    }
+  };
+
+  // Fonction pour supprimer un fichier sélectionné
+  const removeSelectedFile = (id: string, type: 'statement' | 'pricing') => {
+    if (type === 'statement') {
+      setSelectedStatements(prev => {
+        const fileToRemove = prev.find(f => f.id === id);
+        if (fileToRemove?.preview) {
+          URL.revokeObjectURL(fileToRemove.preview);
+        }
+        return prev.filter(f => f.id !== id);
+      });
+      // Réinitialiser l'input pour permettre la re-sélection du même fichier
+      if (statementInputRef.current) {
+        statementInputRef.current.value = '';
+      }
+    } else {
+      setSelectedPricing(prev => {
+        const fileToRemove = prev.find(f => f.id === id);
+        if (fileToRemove?.preview) {
+          URL.revokeObjectURL(fileToRemove.preview);
+        }
+        return prev.filter(f => f.id !== id);
+      });
+      // Réinitialiser l'input pour permettre la re-sélection du même fichier
+      if (pricingInputRef.current) {
+        pricingInputRef.current.value = '';
+      }
+    }
+  };
+
+  // Fonction pour formater la taille des fichiers
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  // Fonction pour uploader les fichiers sélectionnés
+  const uploadSelectedFiles = async (type: 'statement' | 'pricing') => {
+    const files = type === 'statement' ? selectedStatements : selectedPricing;
+    if (files.length === 0) return;
+
+    // Générer un ID de session unique pour cette soumission (une seule fois)
+    // Utiliser localStorage pour persister entre les appels
+    let currentSessionId = sessionId;
+    
+    if (!currentSessionId) {
+      currentSessionId = localStorage.getItem('feeLensSessionId');
+      if (currentSessionId) {
+        setSessionId(currentSessionId);
+      }
+    }
+    
+    if (!currentSessionId) {
+      // Générer un ID fixe basé sur la date et l'entreprise pour éviter les doublons
+      const now = new Date();
+      const dateStr = now.getFullYear().toString() + 
+                     (now.getMonth() + 1).toString().padStart(2, '0') + 
+                     now.getDate().toString().padStart(2, '0') + 
+                     now.getHours().toString().padStart(2, '0') + 
+                     now.getMinutes().toString().padStart(2, '0');
+      currentSessionId = `${formData.company.replace(/\s+/g, '')}_${dateStr}`;
+      setSessionId(currentSessionId);
+      localStorage.setItem('feeLensSessionId', currentSessionId);
+    }
+
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    try {
+      // Simuler le progrès d'upload
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return prev;
+          }
+          return prev + 10;
+        });
+      }, 200);
+
+      // Uploader chaque fichier individuellement
+      for (const file of files) {
+        try {
+          console.log(`Tentative de transfert du fichier: ${file.file.name}`);
+          
+          // Appeler l'API de transfert avec le fichier local
+          const transferFormData = new FormData();
+          transferFormData.append('file', file.file);
+          transferFormData.append('fileName', file.file.name);
+          transferFormData.append('mimeType', file.file.type);
+          transferFormData.append('companyName', formData.company);
+          transferFormData.append('fileType', type === 'statement' ? 'statements' : 'pricing');
+          transferFormData.append('sessionId', currentSessionId || '');
+          
+          const response = await fetch('/api/transfer-to-drive', {
+            method: 'POST',
+            body: transferFormData
+          });
+          
+          if (response.ok) {
+            console.log(`✅ Fichier ${file.file.name} transféré avec succès`);
+          } else {
+            console.error(`❌ Erreur lors du transfert de ${file.file.name}`);
+          }
+        } catch (error) {
+          console.error(`❌ Erreur lors du transfert de ${file.file.name}:`, error);
+        }
+      }
+      
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      // Convertir les fichiers sélectionnés en fichiers uploadés
+      const uploadedFiles: UploadedFile[] = files.map(f => ({
+        key: f.id,
+        name: f.file.name,
+        url: f.preview || '#',
+        size: f.file.size,
+        type: type
+      }));
+
+      if (type === 'statement') {
+        setUploadedStatements(prev => [...prev, ...uploadedFiles]);
+        setSelectedStatements([]);
+      } else {
+        setUploadedPricing(prev => [...prev, ...uploadedFiles]);
+        setSelectedPricing([]);
+      }
+
+      // Réinitialiser l'input
+      if (type === 'statement' && statementInputRef.current) {
+        statementInputRef.current.value = '';
+      } else if (type === 'pricing' && pricingInputRef.current) {
+        pricingInputRef.current.value = '';
+      }
+
+      // Nettoyer le localStorage après un upload réussi
+      localStorage.removeItem('feeLensSessionId');
+      setSessionId(null);
+
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Upload failed. Please try again.');
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,10 +253,16 @@ export default function UploadPage() {
   const isFormValid = formData.name && formData.company && formData.email && 
                      (uploadedStatements.length > 0 || uploadedPricing.length > 0);
 
-  const canProceedToStep2 = formData.name && formData.company && formData.email;
-  const canProceedToStep3 = uploadedStatements.length > 0;
-  const canProceedToStep4 = uploadedPricing.length > 0;
-  const canSubmit = isFormValid;
+  // Fonction de validation d'email
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const canProceedToStep2 = formData.name && formData.company && formData.email && isValidEmail(formData.email);
+  const canProceedToStep3 = uploadedStatements.length > 0 || selectedStatements.length > 0;
+  const canProceedToStep4 = uploadedPricing.length > 0 || selectedPricing.length > 0;
+  const canSubmit = isFormValid && isValidEmail(formData.email);
 
   const nextStep = () => {
     if (currentStep < 4) setCurrentStep(currentStep + 1);
@@ -299,9 +492,21 @@ export default function UploadPage() {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-4 text-white placeholder-blue-200/50 backdrop-blur-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/20 transition-all duration-300 group-hover:bg-white/15"
+                    className={`w-full rounded-xl border px-4 py-4 text-white placeholder-blue-200/50 backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-300 group-hover:bg-white/15 ${
+                      formData.email && !isValidEmail(formData.email)
+                        ? 'border-red-500/50 bg-red-500/5 focus:border-red-400 focus:ring-red-400/20'
+                        : 'border-white/20 bg-white/10 focus:border-emerald-400 focus:ring-emerald-400/20'
+                    }`}
                     placeholder="john@acme.com"
                   />
+                  {formData.email && !isValidEmail(formData.email) && (
+                    <p className="mt-2 text-sm text-red-400 flex items-center gap-2">
+                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      Please enter a valid email address
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="mt-8 flex justify-end">
@@ -344,35 +549,90 @@ export default function UploadPage() {
                   </div>
                   <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300 border border-emerald-500/30">Required</span>
                 </div>
-                <p className="mb-4 text-sm text-slate-300">Upload your monthly bank fee statements</p>
-                <p className="mb-2 text-xs text-slate-400">Accepted files: PDF & CSV</p>
+                <p className="mb-4 text-sm text-slate-300">Select your monthly bank fee statements</p>
+                <p className="mb-4 text-xs text-slate-400">Accepted files: PDF & CSV (max 16MB each)</p>
                 
               {formData.company ? (
-                <UploadDropzone
-                  endpoint="statementUploader"
-                    input={{ companyName: formData.company, documentType: 'statement' } as UploadInput}
-                  onClientUploadComplete={(res) => {
-                    if (res) {
-                        const filesWithType = res.map(file => ({ ...file, type: 'statement' as const }));
-                        setUploadedStatements((prevFiles) => [...prevFiles, ...filesWithType]);
-                    }
-                  }}
-                  onUploadError={(error: Error) => alert(`Upload Failed: ${error.message}`)}
-                  appearance={{
-                      container: { padding: "1.5rem", border: "none" },
-                    uploadIcon: { width: "48px" },
-                      label: { color: "#bfdbfe", fontSize: "14px" },
-                    button: `
-                        w-full mt-4 rounded-xl px-6 py-3 text-sm font-semibold text-white
-                        bg-gradient-to-r from-emerald-500 to-sky-500
-                        hover:from-emerald-600 hover:to-sky-600
-                        shadow-lg shadow-emerald-500/25
-                      transition-all duration-300
-                      ut-uploading:cursor-not-allowed
-                        ut-uploading:opacity-50
-                    `,
-                  }}
-                />
+                  <div className="space-y-4">
+                    {/* Bouton de sélection de fichiers */}
+                    <div className="flex items-center gap-4">
+                      <input
+                        ref={statementInputRef}
+                        type="file"
+                        multiple
+                        accept=".pdf,.csv"
+                        onChange={(e) => handleFileSelect(e, 'statement')}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => statementInputRef.current?.click()}
+                        className="group flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-6 py-3 text-sm font-semibold text-emerald-300 transition-all hover:bg-emerald-500/20 hover:border-emerald-500/50"
+                      >
+                        <Upload className="h-4 w-4" />
+                        <span>Select Files</span>
+                      </button>
+                      
+                      {selectedStatements.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => uploadSelectedFiles('statement')}
+                          disabled={isUploading}
+                          className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-sky-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:scale-105 hover:shadow-emerald-500/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isUploading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span>Uploading... {uploadProgress}%</span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="h-4 w-4" />
+                              <span>Upload {selectedStatements.length} file{selectedStatements.length !== 1 ? 's' : ''}</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Barre de progression */}
+                    {isUploading && (
+                      <div className="w-full rounded-full bg-white/10 p-1">
+                        <div 
+                          className="h-2 rounded-full bg-gradient-to-r from-emerald-500 to-sky-500 transition-all duration-300"
+                          style={{ width: `${uploadProgress}%` }}
+                        />
+                      </div>
+                    )}
+
+                    {/* Liste des fichiers sélectionnés */}
+                    {selectedStatements.length > 0 && (
+                      <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+                        <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-300">
+                          <Eye className="h-4 w-4" />
+                          Selected Files ({selectedStatements.length})
+                        </h4>
+                        <div className="space-y-2">
+                          {selectedStatements.map(file => (
+                            <div key={file.id} className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
+                              <File className="h-5 w-5 shrink-0 text-emerald-400" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-white truncate">{file.file.name}</p>
+                                <p className="text-xs text-slate-400">{formatFileSize(file.file.size)}</p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeSelectedFile(file.id, 'statement')}
+                                className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20 text-red-400 transition-all hover:bg-red-500/30"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
               ) : (
                   <div className="flex h-32 flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/20 text-center">
                     <svg className="mx-auto h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -382,13 +642,14 @@ export default function UploadPage() {
                   </div>
                 )}
                 
+                {/* Fichiers uploadés */}
                 {uploadedStatements.length > 0 && (
                   <div className="mt-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3">
                     <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-emerald-300">
                       <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
-                      Statements ({uploadedStatements.length})
+                      Uploaded Statements ({uploadedStatements.length})
                     </h4>
                     <ul className="space-y-1">
                       {uploadedStatements.map(file => (
@@ -451,35 +712,90 @@ export default function UploadPage() {
                   </div>
                   <span className="rounded-full bg-sky-500/20 px-3 py-1 text-xs font-semibold text-sky-300 border border-sky-500/30">Required</span>
                 </div>
-                <p className="mb-4 text-sm text-slate-300">Upload your bank pricing agreement</p>
-                <p className="mb-2 text-xs text-slate-400">Accepted files: PDF & CSV</p>
+                <p className="mb-4 text-sm text-slate-300">Select your bank pricing agreement</p>
+                <p className="mb-4 text-xs text-slate-400">Accepted files: PDF & CSV (max 16MB each)</p>
                 
                 {formData.company ? (
-                  <UploadDropzone
-                    endpoint="statementUploader"
-                    input={{ companyName: formData.company, documentType: 'pricing' } as UploadInput}
-                    onClientUploadComplete={(res) => {
-                      if (res) {
-                        const filesWithType = res.map(file => ({ ...file, type: 'pricing' as const }));
-                        setUploadedPricing((prevFiles) => [...prevFiles, ...filesWithType]);
-                      }
-                    }}
-                    onUploadError={(error: Error) => alert(`Upload Failed: ${error.message}`)}
-                    appearance={{
-                      container: { padding: "1.5rem", border: "none" },
-                      uploadIcon: { width: "48px" },
-                      label: { color: "#bfdbfe", fontSize: "14px" },
-                      button: `
-                        w-full mt-4 rounded-xl px-6 py-3 text-sm font-semibold text-white
-                        bg-gradient-to-r from-sky-500 to-emerald-500
-                        hover:from-sky-600 hover:to-emerald-600
-                        shadow-lg shadow-sky-500/25
-                        transition-all duration-300
-                        ut-uploading:cursor-not-allowed
-                        ut-uploading:opacity-50
-                      `,
-                    }}
-                  />
+                  <div className="space-y-4">
+                    {/* Bouton de sélection de fichiers */}
+                    <div className="flex items-center gap-4">
+                      <input
+                        ref={pricingInputRef}
+                        type="file"
+                        multiple
+                        accept=".pdf,.csv"
+                        onChange={(e) => handleFileSelect(e, 'pricing')}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => pricingInputRef.current?.click()}
+                        className="group flex items-center gap-2 rounded-xl border border-sky-500/30 bg-sky-500/10 px-6 py-3 text-sm font-semibold text-sky-300 transition-all hover:bg-sky-500/20 hover:border-sky-500/50"
+                      >
+                        <Upload className="h-4 w-4" />
+                        <span>Select Files</span>
+                      </button>
+                      
+                      {selectedPricing.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => uploadSelectedFiles('pricing')}
+                          disabled={isUploading}
+                          className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/25 transition-all hover:scale-105 hover:shadow-sky-500/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isUploading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span>Uploading... {uploadProgress}%</span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="h-4 w-4" />
+                              <span>Upload {selectedPricing.length} file{selectedPricing.length !== 1 ? 's' : ''}</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Barre de progression */}
+                    {isUploading && (
+                      <div className="w-full rounded-full bg-white/10 p-1">
+                        <div 
+                          className="h-2 rounded-full bg-gradient-to-r from-sky-500 to-emerald-500 transition-all duration-300"
+                          style={{ width: `${uploadProgress}%` }}
+                        />
+                      </div>
+                    )}
+
+                    {/* Liste des fichiers sélectionnés */}
+                    {selectedPricing.length > 0 && (
+                      <div className="rounded-xl border border-sky-500/20 bg-sky-500/5 p-4">
+                        <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-sky-300">
+                          <Eye className="h-4 w-4" />
+                          Selected Files ({selectedPricing.length})
+                        </h4>
+                        <div className="space-y-2">
+                          {selectedPricing.map(file => (
+                            <div key={file.id} className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
+                              <File className="h-5 w-5 shrink-0 text-sky-400" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-white truncate">{file.file.name}</p>
+                                <p className="text-xs text-slate-400">{formatFileSize(file.file.size)}</p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeSelectedFile(file.id, 'pricing')}
+                                className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20 text-red-400 transition-all hover:bg-red-500/30"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <div className="flex h-32 flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/20 text-center">
                     <svg className="mx-auto h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -489,13 +805,14 @@ export default function UploadPage() {
                 </div>
               )}
                 
+                {/* Fichiers uploadés */}
                 {uploadedPricing.length > 0 && (
                   <div className="mt-4 rounded-xl border border-sky-500/20 bg-sky-500/5 p-3">
                     <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-sky-300">
                       <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
-                      Pricing Agreement ({uploadedPricing.length})
+                      Uploaded Pricing Agreement ({uploadedPricing.length})
                     </h4>
                     <ul className="space-y-1">
                       {uploadedPricing.map(file => (
@@ -670,6 +987,7 @@ export default function UploadPage() {
                   </div>
                 </div>
               </div>
+
 
               <div className="mt-8 flex justify-between">
                 <button
