@@ -2,8 +2,20 @@
 import { Dropbox } from 'dropbox';
 
 // Configuration Dropbox pour l'environnement serveur
+// Utilise EXCLUSIVEMENT le flux refresh token (recommandé)
+const dropboxAppKey = process.env.DROPBOX_APP_KEY;
+const dropboxAppSecret = process.env.DROPBOX_APP_SECRET;
+const dropboxRefreshToken = process.env.DROPBOX_REFRESH_TOKEN;
+
+if (!dropboxAppKey || !dropboxAppSecret || !dropboxRefreshToken) {
+  // On n'échoue pas au chargement pour éviter de casser le build, on échouera au runtime avec un message clair
+  console.warn('Dropbox non configuré: définis DROPBOX_APP_KEY, DROPBOX_APP_SECRET et DROPBOX_REFRESH_TOKEN');
+}
+
 const dbx = new Dropbox({
-  accessToken: process.env.DROPBOX_ACCESS_TOKEN,
+  clientId: dropboxAppKey,
+  clientSecret: dropboxAppSecret,
+  refreshToken: dropboxRefreshToken,
   fetch: globalThis.fetch,
 });
 
@@ -129,8 +141,9 @@ export class DropboxService {
     sessionId?: string
   ): Promise<DropboxFile> {
     try {
-      if (!process.env.DROPBOX_ACCESS_TOKEN) {
-        throw new Error('DROPBOX_ACCESS_TOKEN non défini');
+      const hasRefreshFlow = !!(process.env.DROPBOX_APP_KEY && process.env.DROPBOX_APP_SECRET && process.env.DROPBOX_REFRESH_TOKEN);
+      if (!hasRefreshFlow) {
+        throw new Error('Configuration Dropbox manquante: définis DROPBOX_APP_KEY, DROPBOX_APP_SECRET et DROPBOX_REFRESH_TOKEN');
       }
       
       // 1. Créer le dossier de l'entreprise avec sous-dossier par type
