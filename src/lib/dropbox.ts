@@ -15,6 +15,9 @@ export interface DropboxFile {
   url: string;
 }
 
+// Cache des dossiers créés (réinitialisé à chaque démarrage du serveur)
+const folderCache = new Set<string>();
+
 export class DropboxService {
   // Créer un dossier pour une entreprise avec sous-dossiers par type
   static async createCompanyFolder(companyName: string, fileType: 'statements' | 'pricing', sessionId?: string): Promise<string> {
@@ -29,23 +32,30 @@ export class DropboxService {
       
       const baseFolderPath = `/FeeLens/${uniqueCompanyName}`;
       const folderPath = `${baseFolderPath}/${fileType}`;
-      console.log(`Création du dossier Dropbox: ${folderPath}`);
+      
+      // Vérifier le cache d'abord
+      if (folderCache.has(folderPath)) {
+        return folderPath;
+      }
       
       // Créer le dossier principal de l'entreprise
-      try {
-        await dbx.filesCreateFolderV2({
-          path: baseFolderPath,
-          autorename: false,
-        });
-        console.log(`Dossier entreprise créé: ${baseFolderPath}`);
-      } catch (error: unknown) {
-        if (error && typeof error === 'object' && 'error' in error && 
-            typeof error.error === 'object' && error.error && 'error_summary' in error.error &&
-            typeof error.error.error_summary === 'string' && 
-            !error.error.error_summary.includes('path/conflict/folder/')) {
-          throw error;
+      if (!folderCache.has(baseFolderPath)) {
+        try {
+          await dbx.filesCreateFolderV2({
+            path: baseFolderPath,
+            autorename: false,
+          });
+          folderCache.add(baseFolderPath);
+        } catch (error: unknown) {
+          if (error && typeof error === 'object' && 'error' in error && 
+              typeof error.error === 'object' && error.error && 'error_summary' in error.error &&
+              typeof error.error.error_summary === 'string' && 
+              error.error.error_summary.includes('path/conflict/folder/')) {
+            folderCache.add(baseFolderPath);
+          } else {
+            throw error;
+          }
         }
-        console.log(`Dossier entreprise existe déjà: ${baseFolderPath}`);
       }
       
       // Créer le sous-dossier par type
@@ -54,20 +64,21 @@ export class DropboxService {
           path: folderPath,
           autorename: false,
         });
-        console.log(`Dossier type créé: ${folderPath}`);
+        folderCache.add(folderPath);
       } catch (error: unknown) {
         if (error && typeof error === 'object' && 'error' in error && 
             typeof error.error === 'object' && error.error && 'error_summary' in error.error &&
             typeof error.error.error_summary === 'string' && 
-            !error.error.error_summary.includes('path/conflict/folder/')) {
+            error.error.error_summary.includes('path/conflict/folder/')) {
+          folderCache.add(folderPath);
+        } else {
           throw error;
         }
-        console.log(`Dossier type existe déjà: ${folderPath}`);
       }
       
       return folderPath;
     } catch (error) {
-      console.error('Erreur lors de la création du dossier Dropbox:', error);
+      console.error('Erreur création dossier Dropbox:', error);
       throw error;
     }
   }
@@ -80,7 +91,6 @@ export class DropboxService {
   ): Promise<DropboxFile> {
     try {
       const filePath = `${folderPath}/${fileName}`;
-      console.log(`Upload vers Dropbox: ${filePath}`);
       
       const response = await dbx.filesUpload({
         path: filePath,
@@ -97,7 +107,6 @@ export class DropboxService {
         },
       });
 
-      console.log(`Fichier uploadé: ${fileName}`);
       return {
         id: response.result.id,
         name: fileName,
@@ -106,7 +115,7 @@ export class DropboxService {
         url: shareResponse.result.url,
       };
     } catch (error) {
-      console.error('Erreur lors de l\'upload du fichier Dropbox:', error);
+      console.error('Erreur upload Dropbox:', error);
       throw error;
     }
   }
@@ -120,38 +129,21 @@ export class DropboxService {
     sessionId?: string
   ): Promise<DropboxFile> {
     try {
-      console.log(`=== DÉBUT DU TRANSFERT DROPBOX ===`);
-      console.log(`Fichier: ${fileName}`);
-      console.log(`Entreprise: ${companyName}`);
-      console.log(`Type: ${fileType}`);
-      console.log(`Session ID: ${sessionId || 'Nouveau'}`);
-      console.log(`Taille: ${fileBuffer.length} bytes`);
-      
-      // Vérifier les variables d'environnement
-      console.log(`DROPBOX_ACCESS_TOKEN: ${process.env.DROPBOX_ACCESS_TOKEN ? 'Défini' : 'NON DÉFINI'}`);
-      
       if (!process.env.DROPBOX_ACCESS_TOKEN) {
         throw new Error('DROPBOX_ACCESS_TOKEN non défini');
       }
       
       // 1. Créer le dossier de l'entreprise avec sous-dossier par type
-      console.log(`Étape 1: Création du dossier...`);
       const folderPath = await this.createCompanyFolder(companyName, fileType, sessionId);
-      console.log(`Dossier: ${folderPath}`);
       
       // 2. Uploader le fichier
-      console.log(`Étape 2: Upload du fichier...`);
       const dropboxFile = await this.uploadFile(fileBuffer, fileName, folderPath);
       
-      console.log(`=== TRANSFERT RÉUSSI ===`);
-      console.log(`Fichier: ${dropboxFile.name}`);
-      console.log(`Chemin: ${dropboxFile.path}`);
-      console.log(`Lien: ${dropboxFile.url}`);
+      console.log(`✅ ${fileName} → ${dropboxFile.path}`);
       
       return dropboxFile;
     } catch (error) {
-      console.error('=== ERREUR LORS DU TRANSFERT DROPBOX ===');
-      console.error('Détails de l\'erreur:', error);
+      console.error('Erreur transfert Dropbox:', error);
       throw error;
     }
   }
