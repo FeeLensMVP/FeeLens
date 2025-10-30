@@ -7,18 +7,9 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const file = formData.get('file') as File;
     const fileName = formData.get('fileName') as string;
-    const mimeType = formData.get('mimeType') as string;
     const companyName = formData.get('companyName') as string;
     const fileType = formData.get('fileType') as 'statements' | 'pricing';
     const sessionId = formData.get('sessionId') as string;
-
-    console.log(`=== API TRANSFERT DROPBOX ===`);
-    console.log(`Fichier: ${fileName}`);
-    console.log(`Type MIME: ${mimeType}`);
-    console.log(`Type fichier: ${fileType}`);
-    console.log(`Entreprise: ${companyName}`);
-    console.log(`Session ID: ${sessionId || 'Nouveau'}`);
-    console.log(`Taille du fichier: ${file.size} bytes`);
 
     if (!file) {
       return NextResponse.json({
@@ -39,8 +30,6 @@ export async function POST(request: Request) {
       sessionId
     );
 
-    console.log(`✅ Transfert réussi: ${dropboxFile.url}`);
-
     return NextResponse.json({
       success: true,
       dropboxFile: {
@@ -52,7 +41,7 @@ export async function POST(request: Request) {
     });
 
   } catch (error) {
-    console.error('❌ Erreur dans /api/transfer-to-drive:', error);
+    console.error('❌ Erreur transfert:', error);
     return NextResponse.json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'Unknown error' 

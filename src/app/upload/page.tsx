@@ -127,14 +127,14 @@ export default function UploadPage() {
     }
     
     if (!currentSessionId) {
-      // Générer un ID fixe basé sur la date et l'entreprise pour éviter les doublons
+      // Générer un ID fixe basé sur la date du jour + nom de la personne
       const now = new Date();
       const dateStr = now.getFullYear().toString() + 
                      (now.getMonth() + 1).toString().padStart(2, '0') + 
-                     now.getDate().toString().padStart(2, '0') + 
-                     now.getHours().toString().padStart(2, '0') + 
-                     now.getMinutes().toString().padStart(2, '0');
-      currentSessionId = `${formData.company.replace(/\s+/g, '')}_${dateStr}`;
+                     now.getDate().toString().padStart(2, '0');
+      const cleanName = formData.name.replace(/\s+/g, '');
+      const cleanCompany = formData.company.replace(/\s+/g, '');
+      currentSessionId = `${cleanCompany}_${cleanName}_${dateStr}`;
       setSessionId(currentSessionId);
       localStorage.setItem('feeLensSessionId', currentSessionId);
     }
@@ -143,46 +143,52 @@ export default function UploadPage() {
     setUploadProgress(0);
 
     try {
-      // Simuler le progrès d'upload
+      // Simuler le progrès d'upload rapide (juste pour l'UI)
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           if (prev >= 90) {
             clearInterval(progressInterval);
             return prev;
           }
-          return prev + 10;
+          return prev + 30;
         });
-      }, 200);
+      }, 100);
 
-      // Uploader chaque fichier individuellement
-      for (const file of files) {
-        try {
-          console.log(`Tentative de transfert du fichier: ${file.file.name}`);
+      // Upload vers Dropbox en arrière-plan avec rate limiting
+      // On attend 500ms entre chaque fichier pour éviter le 429 (Too Many Requests)
+      (async () => {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
           
-          // Appeler l'API de transfert avec le fichier local
-          const transferFormData = new FormData();
-          transferFormData.append('file', file.file);
-          transferFormData.append('fileName', file.file.name);
-          transferFormData.append('mimeType', file.file.type);
-          transferFormData.append('companyName', formData.company);
-          transferFormData.append('fileType', type === 'statement' ? 'statements' : 'pricing');
-          transferFormData.append('sessionId', currentSessionId || '');
-          
-          const response = await fetch('/api/transfer-to-drive', {
-            method: 'POST',
-            body: transferFormData
-          });
-          
-          if (response.ok) {
-            console.log(`✅ Fichier ${file.file.name} transféré avec succès`);
-          } else {
-            console.error(`❌ Erreur lors du transfert de ${file.file.name}`);
+          // Délai entre les requêtes pour éviter le rate limiting
+          if (i > 0) {
+            await new Promise(resolve => setTimeout(resolve, 800));
           }
-        } catch (error) {
-          console.error(`❌ Erreur lors du transfert de ${file.file.name}:`, error);
+          
+          try {
+            const transferFormData = new FormData();
+            transferFormData.append('file', file.file);
+            transferFormData.append('fileName', file.file.name);
+            transferFormData.append('mimeType', file.file.type);
+            transferFormData.append('companyName', formData.company);
+            transferFormData.append('fileType', type === 'statement' ? 'statements' : 'pricing');
+            transferFormData.append('sessionId', currentSessionId || '');
+            
+            const response = await fetch('/api/transfer-to-drive', {
+              method: 'POST',
+              body: transferFormData
+            });
+            
+            if (response.ok) {
+              console.log(`✅ ${file.file.name} → Dropbox`);
+            }
+          } catch (error) {
+            console.error(`❌ ${file.file.name}:`, error);
+          }
         }
-      }
+      })();
       
+      // L'utilisateur reçoit une confirmation immédiate
       clearInterval(progressInterval);
       setUploadProgress(100);
 
