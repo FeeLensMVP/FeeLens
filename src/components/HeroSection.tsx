@@ -42,7 +42,7 @@ export default function HeroSection({ image }: HeroSectionProps) {
             Your money should work for you, not your bank.
           </p>
           <p className="mt-3 text-lg leading-relaxed text-blue-200/80">
-            We audit all your bank charges from the past 24 months and uncover hidden fees, overcharges, and billing errors.
+            We audit all your bank charges from one bank from the past 24 months and uncover hidden fees, overcharges, and billing errors.
           </p>
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">

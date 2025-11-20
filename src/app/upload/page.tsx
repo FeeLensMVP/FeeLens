@@ -23,8 +23,43 @@ type SelectedFile = {
   preview?: string;
 };
 
+// Liste des principales banques américaines
+const US_BANKS = [
+  "JPMorgan Chase",
+  "Bank of America",
+  "Wells Fargo",
+  "Citibank",
+  "U.S. Bank",
+  "PNC Bank",
+  "Truist Bank",
+  "Goldman Sachs",
+  "Morgan Stanley",
+  "Capital One",
+  "TD Bank",
+  "Bank of New York Mellon",
+  "State Street Bank",
+  "HSBC Bank USA",
+  "Fifth Third Bank",
+  "KeyBank",
+  "Regions Bank",
+  "M&T Bank",
+  "Huntington Bank",
+  "Citizens Bank",
+  "First Republic Bank",
+  "Comerica Bank",
+  "Zions Bank",
+  "BMO Harris Bank",
+  "SunTrust Bank",
+  "BB&T Bank",
+  "First National Bank",
+  "Frost Bank",
+  "East West Bank",
+  "Silicon Valley Bank",
+  "Other"
+];
+
 export default function UploadPage() {
-  const [formData, setFormData] = useState({ name: "", company: "", email: "" });
+  const [formData, setFormData] = useState({ name: "", company: "", email: "", bank: "", otherBank: "" });
   const [uploadedStatements, setUploadedStatements] = useState<UploadedFile[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -40,9 +75,14 @@ export default function UploadPage() {
   // Refs pour les inputs de fichiers
   const statementInputRef = useRef<HTMLInputElement>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Si "Other" est sélectionné, réinitialiser otherBank
+    if (name === 'bank' && value !== 'Other') {
+      setFormData((prev) => ({ ...prev, otherBank: '' }));
+    }
     
     // Réinitialiser le sessionId et timestamp quand on change les infos de base
     if (name === 'company' && (sessionId || sessionTimestamp)) {
@@ -210,7 +250,8 @@ export default function UploadPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          ...formData, 
+          ...formData,
+          bank: getBankName(),
           statements: uploadedStatements
         }),
       });
@@ -228,6 +269,7 @@ export default function UploadPage() {
   };
   
   const isFormValid = formData.name && formData.company && formData.email && 
+                     formData.bank && (formData.bank !== 'Other' || formData.otherBank) &&
                      uploadedStatements.length > 0;
 
   // Fonction de validation d'email
@@ -237,8 +279,13 @@ export default function UploadPage() {
   };
 
   const canProceedToStep2 = formData.name && formData.company && formData.email && isValidEmail(formData.email);
-  const canProceedToStep3 = uploadedStatements.length > 0 || selectedStatements.length > 0;
+  const canProceedToStep3 = formData.bank && (formData.bank !== 'Other' || formData.otherBank) && (uploadedStatements.length > 0 || selectedStatements.length > 0);
   const canSubmit = isFormValid && isValidEmail(formData.email);
+  
+  // Fonction pour obtenir le nom de la banque (avec gestion de "Other")
+  const getBankName = () => {
+    return formData.bank === 'Other' ? formData.otherBank : formData.bank;
+  };
 
   const nextStep = () => {
     if (currentStep < 3) setCurrentStep(currentStep + 1);
@@ -272,7 +319,7 @@ export default function UploadPage() {
             </h1>
             
             <p className="mb-12 text-xl text-blue-200/90 leading-relaxed max-w-2xl mx-auto">
-              Your documents have been submitted successfully. We&apos;ll analyze your bank fee statements 
+              Your documents have been submitted successfully. We&apos;ll analyze your bank fee statements from one bank 
               and send you a detailed savings report within 7 business days.
             </p>
 
@@ -345,7 +392,7 @@ export default function UploadPage() {
             <span className="bg-gradient-to-r from-emerald-400 to-sky-400 bg-clip-text text-transparent"> Documents</span>
           </h1>
           <p className="mt-6 text-xl text-blue-100/90 max-w-3xl mx-auto leading-relaxed">
-            Submit your bank fee statements. Our AI will analyze them and identify potential savings.
+            Submit your bank fee statements from one bank. Our AI will analyze them and identify potential savings.
           </p>
           <div className="mt-6 flex items-center justify-center gap-6 text-sm text-blue-200/70">
             <div className="flex items-center gap-2">
@@ -507,7 +554,62 @@ export default function UploadPage() {
                 </div>
           <div>
                   <h2 className="text-2xl font-bold text-white">Bank Fee Statements</h2>
-                  <p className="text-blue-200/70">Upload your monthly bank fee statements</p>
+                  <p className="text-blue-200/70">Upload your monthly bank fee statements from one bank</p>
+                </div>
+              </div>
+              
+              {/* Bank Selection */}
+              <div className="mb-6 rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/5 to-sky-500/10 p-6 backdrop-blur-sm shadow-lg">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-500/20 border border-sky-500/30">
+                    <svg className="h-5 w-5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-white">Select Your Bank</h3>
+                    <p className="text-sm text-sky-200/80">Choose the bank for this audit</p>
+                  </div>
+                  <span className="rounded-full bg-sky-500/20 px-3 py-1 text-xs font-semibold text-sky-300 border border-sky-500/30">Required</span>
+                </div>
+                <div className="space-y-4">
+                  <div className="group">
+                    <label htmlFor="bank" className="block text-sm font-semibold text-white mb-3">
+                      Bank Name *
+                    </label>
+                    <select
+                      id="bank"
+                      name="bank"
+                      value={formData.bank}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-4 text-white backdrop-blur-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400/20 transition-all duration-300 group-hover:bg-white/15"
+                    >
+                      <option value="">-- Select a bank --</option>
+                      {US_BANKS.map((bank) => (
+                        <option key={bank} value={bank} className="bg-slate-800 text-white">
+                          {bank}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {formData.bank === 'Other' && (
+                    <div className="group">
+                      <label htmlFor="otherBank" className="block text-sm font-semibold text-white mb-3">
+                        Bank Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="otherBank"
+                        name="otherBank"
+                        value={formData.otherBank}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-4 text-white placeholder-blue-200/50 backdrop-blur-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400/20 transition-all duration-300 group-hover:bg-white/15"
+                        placeholder="Enter your bank name"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
               
@@ -520,7 +622,7 @@ export default function UploadPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-white">Bank Fee Statements</h3>
-                    <p className="text-sm text-emerald-200/80">Monthly fee statements from your bank</p>
+                    <p className="text-sm text-emerald-200/80">Monthly fee statements from one bank</p>
                   </div>
                   <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300 border border-emerald-500/30">Required</span>
                 </div>
@@ -721,6 +823,34 @@ export default function UploadPage() {
                         <span className="text-blue-200/70 font-medium">Email Address</span>
                       </div>
                       <span className="text-white font-semibold">{formData.email}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bank Information Review */}
+                <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/5 to-sky-500/10 p-8 backdrop-blur-sm shadow-lg">
+                  <div className="mb-6 flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-500/20 border border-sky-500/30">
+                      <svg className="h-6 w-6 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white">Bank Information</h3>
+                      <p className="text-sm text-sky-200/80">Selected bank for audit</p>
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-white/5 p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/20">
+                        <svg className="h-4 w-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                      </div>
+                      <span className="text-blue-200/70 font-medium">Bank Name</span>
+                    </div>
+                    <div className="mt-2">
+                      <span className="text-white font-semibold text-lg">{getBankName()}</span>
                     </div>
                   </div>
                 </div>

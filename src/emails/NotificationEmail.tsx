@@ -15,10 +15,11 @@ interface NotificationEmailProps {
   name: string;
   company: string;
   email: string;
+  bank?: string;
   statementCount: number;
 }
 
-export const NotificationEmail = ({ name, company, email, statementCount }: NotificationEmailProps) => (
+export const NotificationEmail = ({ name, company, email, bank, statementCount }: NotificationEmailProps) => (
   <Html>
     <Head />
     <Preview>New Audit Request: {company}</Preview>
@@ -31,7 +32,7 @@ export const NotificationEmail = ({ name, company, email, statementCount }: Noti
         </div>
         
             <Text style={intro}>
-              A new client has submitted their bank fee audit request with statements (PDF & CSV files). Review the details below:
+              A new client has submitted their bank fee audit request with statements from {bank || 'their bank'} (PDF & CSV files). Review the details below:
             </Text>
 
         {/* Card avec les détails */}
@@ -47,6 +48,10 @@ export const NotificationEmail = ({ name, company, email, statementCount }: Noti
           <div style={detailRow}>
             <span style={label}>Email</span>
             <span style={valueEmail}>{email}</span>
+          </div>
+          <div style={detailRow}>
+            <span style={label}>Bank</span>
+            <span style={value}>{bank || 'Not specified'}</span>
           </div>
               <div style={detailRow}>
                 <span style={label}>Bank Statements</span>

@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, company, email, statements } = body;
+    const { name, company, email, bank, statements } = body;
 
     // Validation de l'email côté serveur
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
         from: FROM_EMAIL,
         to: email, // L'email du CFO
         subject: 'Your FeeLens audit is underway',
-        react: ConfirmationEmail({ name, company }),
+        react: ConfirmationEmail({ name, company, bank }),
       }),
           // 2. Envoyer l'email de notification à vos adresses admin
           resend.emails.send({
@@ -58,7 +58,8 @@ export async function POST(request: Request) {
             react: NotificationEmail({ 
               name, 
               company, 
-              email, 
+              email,
+              bank,
               statementCount: statements?.length || 0
             }),
           })
