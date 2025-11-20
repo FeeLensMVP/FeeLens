@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { NAV_LINKS } from "@/lib/constants";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import logoImage from "@/assets/images/Ligne Logo Modified.png";
 
 export default function Header() {
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
@@ -15,15 +17,15 @@ export default function Header() {
         {/* Logo */}
         <Link
           href="/"
-          className="group flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-900 transition-all hover:scale-105"
+          className="group flex items-center transition-all hover:scale-105"
           onMouseEnter={() => setHoveredLink(null)}
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-sky-500 shadow-lg shadow-emerald-500/25 transition-transform group-hover:rotate-12">
-            <span className="text-lg font-bold text-white">F</span>
-          </div>
-          <span className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-            FeeLens
-          </span>
+          <Image
+            src={logoImage}
+            alt="FeeLens Logo"
+            className="h-12 w-auto object-contain"
+            priority
+          />
         </Link>
 
         {/* Desktop Navigation */}

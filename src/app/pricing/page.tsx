@@ -22,13 +22,13 @@ export default function PricingPage() {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-16">
+          <div className="grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-4 mb-16 items-stretch">
             {/* Free Plan */}
-            <div className="group relative flex flex-col rounded-3xl border border-white/20 bg-gradient-to-br from-white/10 via-white/5 to-white/10 p-8 backdrop-blur-xl shadow-2xl transition-all duration-300 hover:scale-105 hover:border-emerald-500/30 hover:shadow-emerald-500/20">
-              <div className="mb-6 min-h-[140px]">
-                <h3 className="mb-2 text-3xl font-bold text-white">Free</h3>
-                <p className="mb-4 text-lg font-semibold text-emerald-400">20% success fee*</p>
-                <p className="text-sm font-semibold text-blue-200/80">One-time Audit</p>
+            <div className="group relative flex flex-col rounded-3xl border border-white/20 bg-gradient-to-br from-white/10 via-white/5 to-white/10 p-6 md:p-8 backdrop-blur-xl shadow-2xl transition-all duration-300 hover:scale-105 hover:border-emerald-500/30 hover:shadow-emerald-500/20">
+              <div className="mb-6 h-[140px] md:h-[160px] flex flex-col justify-start">
+                <h3 className="mb-2 text-2xl md:text-3xl font-bold text-white">Free</h3>
+                <p className="mb-4 text-base md:text-lg font-semibold text-emerald-400">20% success fee*</p>
+                <p className="text-xs md:text-sm font-semibold text-blue-200/80">One-time Audit</p>
               </div>
 
               <div className="mb-6">
@@ -111,12 +111,12 @@ export default function PricingPage() {
             </div>
 
             {/* Pro Plan */}
-            <div className="group relative flex flex-col rounded-3xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-500/10 via-white/10 to-sky-500/10 p-8 backdrop-blur-xl shadow-2xl shadow-emerald-500/20 transition-all duration-300 hover:scale-105 hover:border-emerald-500/70 hover:shadow-emerald-500/30">
-              <div className="mb-6 min-h-[140px]">
-                <h3 className="mb-2 text-3xl font-bold text-white">Pro</h3>
-                <p className="mb-4 text-lg font-semibold text-emerald-400">$995/mo for 1-5 banking partners</p>
-                <p className="mb-2 text-sm font-semibold text-emerald-400">+20% success fee</p>
-                <p className="text-sm font-semibold text-blue-200/80">Monthly Saas Subscription</p>
+            <div className="group relative flex flex-col rounded-3xl border-2 border-emerald-500/50 bg-gradient-to-br from-emerald-500/10 via-white/10 to-sky-500/10 p-6 md:p-8 backdrop-blur-xl shadow-2xl shadow-emerald-500/20 transition-all duration-300 hover:scale-105 hover:border-emerald-500/70 hover:shadow-emerald-500/30">
+              <div className="mb-6 h-[140px] md:h-[160px] flex flex-col justify-start">
+                <h3 className="mb-2 text-2xl md:text-3xl font-bold text-white">Pro</h3>
+                <p className="mb-4 text-base md:text-lg font-semibold text-emerald-400">$495/mo for 1-2 banking partners</p>
+                <p className="mb-2 text-xs md:text-sm font-semibold text-emerald-400">+20% success fee</p>
+                <p className="text-xs md:text-sm font-semibold text-blue-200/80">Monthly Saas Subscription</p>
               </div>
 
               <div className="mb-6">
@@ -126,7 +126,7 @@ export default function PricingPage() {
                     <svg className="h-5 w-5 shrink-0 text-emerald-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-blue-200/90 text-sm">1-5 connected US banks</span>
+                    <span className="text-blue-200/90 text-sm">1-2 connected US banks</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <svg className="h-5 w-5 shrink-0 text-emerald-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -210,12 +210,13 @@ export default function PricingPage() {
               </div>
             </div>
 
-            {/* Enterprise Plan */}
-            <div className="group relative flex flex-col rounded-3xl border border-white/20 bg-gradient-to-br from-white/10 via-white/5 to-white/10 p-8 backdrop-blur-xl shadow-2xl transition-all duration-300 hover:scale-105 hover:border-sky-500/30 hover:shadow-sky-500/20">
-              <div className="mb-6 min-h-[140px]">
-                <h3 className="mb-2 text-3xl font-bold text-white">Enterprise</h3>
-                <p className="mb-4 text-lg font-semibold text-sky-400">Custom</p>
-                <p className="text-sm text-blue-200/70 italic">All the features of Pro, and:</p>
+            {/* Plus Plan */}
+            <div className="group relative flex flex-col rounded-3xl border-2 border-sky-500/50 bg-gradient-to-br from-sky-500/10 via-white/10 to-emerald-500/10 p-6 md:p-8 backdrop-blur-xl shadow-2xl shadow-sky-500/20 transition-all duration-300 hover:scale-105 hover:border-sky-500/70 hover:shadow-sky-500/30">
+              <div className="mb-6 h-[140px] md:h-[160px] flex flex-col justify-start">
+                <h3 className="mb-2 text-2xl md:text-3xl font-bold text-white">Pro +</h3>
+                <p className="mb-4 text-base md:text-lg font-semibold text-sky-400">$995/mo for 3-5 banking partners</p>
+                <p className="mb-2 text-xs md:text-sm font-semibold text-sky-400">+20% success fee</p>
+                <p className="text-xs md:text-sm font-semibold text-blue-200/80">Monthly Saas Subscription</p>
               </div>
 
               <div className="mb-6">
@@ -225,7 +226,36 @@ export default function PricingPage() {
                     <svg className="h-5 w-5 shrink-0 text-sky-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-blue-200/90 text-sm">6+ connected US banks</span>
+                    <span className="text-blue-200/90 text-sm">3-5 connected US banks</span>
+                  </li>
+                </ul>
+                <div className="mt-4 pt-4 border-t border-sky-500/30">
+                  <p className="text-base font-bold text-sky-300">All the features of Pro</p>
+                </div>
+              </div>
+
+              <div className="mt-auto pt-6">
+                <button className="w-full rounded-full bg-slate-600/50 px-6 py-4 text-lg font-bold text-white/70 shadow-xl cursor-not-allowed" disabled>
+                  Coming Soon
+                </button>
+              </div>
+            </div>
+
+            {/* Enterprise Plan */}
+            <div className="group relative flex flex-col rounded-3xl border border-white/20 bg-gradient-to-br from-white/10 via-white/5 to-white/10 p-6 md:p-8 backdrop-blur-xl shadow-2xl transition-all duration-300 hover:scale-105 hover:border-sky-500/30 hover:shadow-sky-500/20">
+              <div className="mb-6 h-[140px] md:h-[160px] flex flex-col justify-start">
+                <h3 className="mb-2 text-2xl md:text-3xl font-bold text-white">Enterprise</h3>
+                <p className="mb-4 text-base md:text-lg font-semibold text-sky-400">Custom</p>
+              </div>
+
+              <div className="mb-6">
+                <h4 className="mb-3 text-sm font-bold text-white uppercase tracking-wide">Key Features</h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <svg className="h-5 w-5 shrink-0 text-sky-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-blue-200/90 text-sm">Unlimited connected US banks</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <svg className="h-5 w-5 shrink-0 text-sky-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -252,6 +282,9 @@ export default function PricingPage() {
                     <span className="text-blue-200/90 text-sm">Dedicated implementation manager</span>
                   </li>
                 </ul>
+                <div className="mt-4 pt-4 border-t border-sky-500/30">
+                  <p className="text-base font-bold text-sky-300">All the features of Pro</p>
+                </div>
               </div>
 
               <div className="mt-auto pt-6">

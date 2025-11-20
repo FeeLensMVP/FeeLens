@@ -11,7 +11,7 @@ export default function AuditSection({ subscribed }: AuditSectionProps) {
   return (
     <section id="audit" className="relative z-10 mt-32 scroll-mt-32 pb-24">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="relative overflow-hidden rounded-[32px] border border-emerald-300/50 bg-gradient-to-br from-emerald-50 via-white to-sky-50 shadow-[0_20px_100px_-20px_rgba(16,185,129,0.5)] backdrop-blur-xl">
+        <div className="relative overflow-hidden rounded-[32px] border border-emerald-300/50 bg-gradient-to-br from-emerald-50/95 via-white to-sky-50/95 shadow-[0_20px_100px_-20px_rgba(16,185,129,0.5)] backdrop-blur-xl">
           {/* Decorative blurs */}
           <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-emerald-400/10 blur-3xl" />
           <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-sky-400/10 blur-3xl" />

@@ -19,7 +19,7 @@ export default async function Home({
   const subscribed = params?.subscribed === "1";
 
   return (
-    <div className="relative overflow-x-hidden bg-[radial-gradient(circle_at_top,_#0A1F44_0%,_#071635_45%,_#0D2B6C_70%,_#0F2250_85%,_white_100%)] text-gray-900">
+    <div className="relative overflow-x-hidden bg-[radial-gradient(circle_at_top,_#0A1F44_0%,_#071635_45%,_#0D2B6C_70%,_#0F2250_85%,_#0F2250_100%)] text-gray-900">
       {/* On utilise le composant de fond ici */}
       <PageBackground />
 

@@ -279,7 +279,7 @@ export default function UploadPage() {
   };
 
   const canProceedToStep2 = formData.name && formData.company && formData.email && isValidEmail(formData.email);
-  const canProceedToStep3 = formData.bank && (formData.bank !== 'Other' || formData.otherBank) && (uploadedStatements.length > 0 || selectedStatements.length > 0);
+  const canProceedToStep3 = formData.bank && (formData.bank !== 'Other' || formData.otherBank) && uploadedStatements.length > 0;
   const canSubmit = isFormValid && isValidEmail(formData.email);
   
   // Fonction pour obtenir le nom de la banque (avec gestion de "Other")

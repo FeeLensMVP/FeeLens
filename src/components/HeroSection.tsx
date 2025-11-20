@@ -20,28 +20,33 @@ export default function HeroSection({ image }: HeroSectionProps) {
           transition={{ duration: 0.6 }}
         >
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-300 backdrop-blur-sm border border-emerald-500/20">
+          <motion.div 
+            className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-5 py-2.5 text-sm font-medium text-emerald-300 backdrop-blur-md border border-emerald-500/30 shadow-lg shadow-emerald-500/10"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
             </span>
-            Free audit — no payment required
-          </div>
+            Free audit — no payment required (single bank only)
+          </motion.div>
 
           <h1 className="mt-8 text-5xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
             Stop Fees.
             <br />
-            <span className="bg-gradient-to-r from-emerald-400 to-sky-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-emerald-400 via-sky-400 to-emerald-400 bg-clip-text text-transparent bg-[length:200%_auto] animate-[shimmer_3s_ease-in-out_infinite]">
               Save More.
             </span>
             <br />
             Bank Smarter.
           </h1>
           
-          <p className="mt-6 text-xl leading-relaxed text-blue-100/90">
+          <p className="mt-8 text-xl leading-relaxed text-blue-100/90 font-medium">
             Your money should work for you, not your bank.
           </p>
-          <p className="mt-3 text-lg leading-relaxed text-blue-200/80">
+          <p className="mt-4 text-lg leading-relaxed text-blue-200/80">
             We audit all your bank charges from one bank from the past 24 months and uncover hidden fees, overcharges, and billing errors.
           </p>
 
@@ -69,18 +74,27 @@ export default function HeroSection({ image }: HeroSectionProps) {
           </div>
 
           {/* Social Proof */}
-          <div className="mt-10 flex items-center gap-8 text-sm text-blue-200/70">
-            <div className="flex items-center gap-2">
+          <motion.div 
+            className="mt-12 flex flex-wrap items-center gap-6 text-sm text-blue-200/80"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <div className="flex items-center gap-2 rounded-lg bg-white/5 px-4 py-2 backdrop-blur-sm border border-white/10">
               <svg className="h-5 w-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
-              <span>Trusted by CFOs</span>
+              <span className="font-medium">Trusted by CFOs</span>
             </div>
-            <div className="h-4 w-px bg-white/20" />
-            <div>20-30% avg. savings</div>
-            <div className="h-4 w-px bg-white/20" />
-            <div>7-day turnaround</div>
-          </div>
+            <div className="flex items-center gap-2 rounded-lg bg-white/5 px-4 py-2 backdrop-blur-sm border border-white/10">
+              <span className="font-semibold text-emerald-400">20-30%</span>
+              <span>avg. savings</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg bg-white/5 px-4 py-2 backdrop-blur-sm border border-white/10">
+              <span className="font-semibold text-sky-400">7 days</span>
+              <span>turnaround</span>
+            </div>
+          </motion.div>
         </motion.div>
 
         {/* Right Image */}

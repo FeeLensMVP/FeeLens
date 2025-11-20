@@ -37,10 +37,10 @@ export default function SolutionSection() {
   return (
     <section id="solution" className="relative z-10 mt-32 scroll-mt-32">
       {/* Large gradient background */}
-      <div className="absolute inset-x-0 -top-40 -z-10 h-[600px] bg-gradient-to-b from-transparent via-emerald-500/5 to-white/50" />
+      <div className="absolute inset-x-0 -top-40 -z-10 h-[600px] bg-gradient-to-b from-transparent via-emerald-500/3 to-transparent" />
 
       <div className="mx-auto max-w-7xl px-6">
-        <div className="relative overflow-hidden rounded-[32px] border border-emerald-200/40 bg-gradient-to-br from-white/95 via-white/90 to-emerald-50/50 p-12 shadow-[0_20px_80px_-20px_rgba(16,185,129,0.3)] backdrop-blur-xl md:p-16">
+        <div className="relative overflow-hidden rounded-[32px] border border-emerald-200/40 bg-gradient-to-br from-white/98 via-white/95 to-emerald-50/60 p-12 shadow-[0_20px_80px_-20px_rgba(16,185,129,0.3)] backdrop-blur-xl md:p-16">
           {/* Decorative elements */}
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-400/10 blur-3xl" />
           <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-sky-400/10 blur-3xl" />
@@ -68,7 +68,7 @@ export default function SolutionSection() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="group relative"
                 >
-                  <div className="relative h-full overflow-hidden rounded-2xl border border-slate-200/60 bg-white/80 p-8 shadow-lg shadow-slate-900/5 backdrop-blur-sm transition-all duration-300 hover:border-emerald-300/50 hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1">
+                  <div className="relative h-full overflow-hidden rounded-2xl border border-slate-200/60 bg-white/90 p-8 shadow-lg shadow-slate-900/5 backdrop-blur-sm transition-all duration-300 hover:border-emerald-300/60 hover:shadow-xl hover:shadow-emerald-500/20 hover:-translate-y-2 hover:scale-[1.02]">
                     {/* Number badge */}
                     <div className="absolute -right-3 -top-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-sky-500 text-lg font-bold text-white shadow-lg">
                       {index + 1}
