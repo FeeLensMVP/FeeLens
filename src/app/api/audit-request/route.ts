@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, company, email, statements, pricing } = body;
+    const { name, company, email, statements } = body;
 
     // Validation de l'email côté serveur
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,8 +59,7 @@ export async function POST(request: Request) {
               name, 
               company, 
               email, 
-              statementCount: statements?.length || 0,
-              pricingCount: pricing?.length || 0 
+              statementCount: statements?.length || 0
             }),
           })
     ]);

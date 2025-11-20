@@ -26,14 +26,12 @@ type SelectedFile = {
 export default function UploadPage() {
   const [formData, setFormData] = useState({ name: "", company: "", email: "" });
   const [uploadedStatements, setUploadedStatements] = useState<UploadedFile[]>([]);
-  const [uploadedPricing, setUploadedPricing] = useState<UploadedFile[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
 
   // États pour les fichiers sélectionnés
   const [selectedStatements, setSelectedStatements] = useState<SelectedFile[]>([]);
-  const [selectedPricing, setSelectedPricing] = useState<SelectedFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -41,7 +39,6 @@ export default function UploadPage() {
   
   // Refs pour les inputs de fichiers
   const statementInputRef = useRef<HTMLInputElement>(null);
-  const pricingInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -57,7 +54,7 @@ export default function UploadPage() {
   };
 
   // Fonction pour gérer la sélection de fichiers
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, type: 'statement' | 'pricing') => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const newFiles: SelectedFile[] = files.map(file => ({
       file,
@@ -65,39 +62,21 @@ export default function UploadPage() {
       preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined
     }));
 
-    if (type === 'statement') {
-      setSelectedStatements(prev => [...prev, ...newFiles]);
-    } else {
-      setSelectedPricing(prev => [...prev, ...newFiles]);
-    }
+    setSelectedStatements(prev => [...prev, ...newFiles]);
   };
 
   // Fonction pour supprimer un fichier sélectionné
-  const removeSelectedFile = (id: string, type: 'statement' | 'pricing') => {
-    if (type === 'statement') {
-      setSelectedStatements(prev => {
-        const fileToRemove = prev.find(f => f.id === id);
-        if (fileToRemove?.preview) {
-          URL.revokeObjectURL(fileToRemove.preview);
-        }
-        return prev.filter(f => f.id !== id);
-      });
-      // Réinitialiser l'input pour permettre la re-sélection du même fichier
-      if (statementInputRef.current) {
-        statementInputRef.current.value = '';
+  const removeSelectedFile = (id: string) => {
+    setSelectedStatements(prev => {
+      const fileToRemove = prev.find(f => f.id === id);
+      if (fileToRemove?.preview) {
+        URL.revokeObjectURL(fileToRemove.preview);
       }
-    } else {
-      setSelectedPricing(prev => {
-        const fileToRemove = prev.find(f => f.id === id);
-        if (fileToRemove?.preview) {
-          URL.revokeObjectURL(fileToRemove.preview);
-        }
-        return prev.filter(f => f.id !== id);
-      });
-      // Réinitialiser l'input pour permettre la re-sélection du même fichier
-      if (pricingInputRef.current) {
-        pricingInputRef.current.value = '';
-      }
+      return prev.filter(f => f.id !== id);
+    });
+    // Réinitialiser l'input pour permettre la re-sélection du même fichier
+    if (statementInputRef.current) {
+      statementInputRef.current.value = '';
     }
   };
 
@@ -111,8 +90,8 @@ export default function UploadPage() {
   };
 
   // Fonction pour uploader les fichiers sélectionnés
-  const uploadSelectedFiles = async (type: 'statement' | 'pricing') => {
-    const files = type === 'statement' ? selectedStatements : selectedPricing;
+  const uploadSelectedFiles = async () => {
+    const files = selectedStatements;
     if (files.length === 0) return;
 
     // Générer un ID de session unique pour cette soumission (une seule fois)
@@ -171,7 +150,7 @@ export default function UploadPage() {
             transferFormData.append('fileName', file.file.name);
             transferFormData.append('mimeType', file.file.type);
             transferFormData.append('companyName', formData.company);
-            transferFormData.append('fileType', type === 'statement' ? 'statements' : 'pricing');
+            transferFormData.append('fileType', 'statements');
             transferFormData.append('sessionId', currentSessionId || '');
             
             const response = await fetch('/api/transfer-to-drive', {
@@ -198,22 +177,15 @@ export default function UploadPage() {
         name: f.file.name,
         url: f.preview || '#',
         size: f.file.size,
-        type: type
+        type: 'statement'
       }));
 
-      if (type === 'statement') {
-        setUploadedStatements(prev => [...prev, ...uploadedFiles]);
-        setSelectedStatements([]);
-      } else {
-        setUploadedPricing(prev => [...prev, ...uploadedFiles]);
-        setSelectedPricing([]);
-      }
+      setUploadedStatements(prev => [...prev, ...uploadedFiles]);
+      setSelectedStatements([]);
 
       // Réinitialiser l'input
-      if (type === 'statement' && statementInputRef.current) {
+      if (statementInputRef.current) {
         statementInputRef.current.value = '';
-      } else if (type === 'pricing' && pricingInputRef.current) {
-        pricingInputRef.current.value = '';
       }
 
       // Nettoyer le localStorage après un upload réussi
@@ -239,8 +211,7 @@ export default function UploadPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           ...formData, 
-          statements: uploadedStatements,
-          pricing: uploadedPricing 
+          statements: uploadedStatements
         }),
       });
 
@@ -257,7 +228,7 @@ export default function UploadPage() {
   };
   
   const isFormValid = formData.name && formData.company && formData.email && 
-                     (uploadedStatements.length > 0 || uploadedPricing.length > 0);
+                     uploadedStatements.length > 0;
 
   // Fonction de validation d'email
   const isValidEmail = (email: string) => {
@@ -267,11 +238,10 @@ export default function UploadPage() {
 
   const canProceedToStep2 = formData.name && formData.company && formData.email && isValidEmail(formData.email);
   const canProceedToStep3 = uploadedStatements.length > 0 || selectedStatements.length > 0;
-  const canProceedToStep4 = uploadedPricing.length > 0 || selectedPricing.length > 0;
   const canSubmit = isFormValid && isValidEmail(formData.email);
 
   const nextStep = () => {
-    if (currentStep < 4) setCurrentStep(currentStep + 1);
+    if (currentStep < 3) setCurrentStep(currentStep + 1);
   };
 
   const prevStep = () => {
@@ -302,7 +272,7 @@ export default function UploadPage() {
             </h1>
             
             <p className="mb-12 text-xl text-blue-200/90 leading-relaxed max-w-2xl mx-auto">
-              Your documents have been submitted successfully. We&apos;ll analyze your bank fee statements and pricing agreement, 
+              Your documents have been submitted successfully. We&apos;ll analyze your bank fee statements 
               and send you a detailed savings report within 7 business days.
             </p>
 
@@ -375,7 +345,7 @@ export default function UploadPage() {
             <span className="bg-gradient-to-r from-emerald-400 to-sky-400 bg-clip-text text-transparent"> Documents</span>
           </h1>
           <p className="mt-6 text-xl text-blue-100/90 max-w-3xl mx-auto leading-relaxed">
-            Submit your bank fee statements and pricing agreements. Our AI will analyze them and identify potential savings.
+            Submit your bank fee statements. Our AI will analyze them and identify potential savings.
           </p>
           <div className="mt-6 flex items-center justify-center gap-6 text-sm text-blue-200/70">
             <div className="flex items-center gap-2">
@@ -405,7 +375,7 @@ export default function UploadPage() {
         {/* Progress Bar */}
         <div className="mx-auto max-w-2xl mb-8">
           <div className="flex items-center justify-between mb-4">
-            {[1, 2, 3, 4].map((step) => (
+            {[1, 2, 3].map((step) => (
               <div key={step} className="flex items-center">
                 <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${
                   step <= currentStep 
@@ -414,7 +384,7 @@ export default function UploadPage() {
                 }`}>
                   {step}
                 </div>
-                {step < 4 && (
+                {step < 3 && (
                   <div className={`h-1 w-16 mx-2 rounded-full ${
                     step < currentStep ? 'bg-gradient-to-r from-emerald-500 to-sky-500' : 'bg-white/10'
                   }`} />
@@ -424,10 +394,9 @@ export default function UploadPage() {
           </div>
           <div className="text-center">
             <p className="text-sm text-blue-200/70">
-              Step {currentStep} of 4: {
+              Step {currentStep} of 3: {
                 currentStep === 1 ? 'Contact Information' :
                 currentStep === 2 ? 'Bank Statements' :
-                currentStep === 3 ? 'Pricing Agreement' :
                 'Review & Submit'
               }
             </p>
@@ -567,7 +536,7 @@ export default function UploadPage() {
                         type="file"
                         multiple
                         accept=".pdf,.csv"
-                        onChange={(e) => handleFileSelect(e, 'statement')}
+                        onChange={handleFileSelect}
                         className="hidden"
                       />
                       <button
@@ -582,7 +551,7 @@ export default function UploadPage() {
                       {selectedStatements.length > 0 && (
                         <button
                           type="button"
-                          onClick={() => uploadSelectedFiles('statement')}
+                          onClick={() => uploadSelectedFiles()}
                           disabled={isUploading}
                           className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-sky-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:scale-105 hover:shadow-emerald-500/40 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
@@ -628,7 +597,7 @@ export default function UploadPage() {
                               </div>
                               <button
                                 type="button"
-                                onClick={() => removeSelectedFile(file.id, 'statement')}
+                                onClick={() => removeSelectedFile(file.id)}
                                 className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20 text-red-400 transition-all hover:bg-red-500/30"
                               >
                                 <X className="h-4 w-4" />
@@ -685,169 +654,6 @@ export default function UploadPage() {
                   disabled={!canProceedToStep3}
                   className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-emerald-500 to-sky-500 px-8 py-4 text-lg font-bold text-white shadow-2xl shadow-emerald-500/30 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 hover:enabled:scale-105 hover:enabled:shadow-emerald-500/50 focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300"
                 >
-                  <span>Next: Pricing Agreement</span>
-                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Pricing Agreement */}
-          {currentStep === 3 && (
-            <div className="rounded-3xl border border-white/20 bg-gradient-to-br from-white/10 via-white/5 to-white/10 p-8 backdrop-blur-xl shadow-2xl">
-              <div className="mb-8 flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-sky-500 text-xl font-bold text-white shadow-lg">
-                  3
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white">Pricing Agreement</h2>
-                  <p className="text-blue-200/70">Upload your bank pricing agreement</p>
-                </div>
-              </div>
-              
-              <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/5 to-sky-500/10 p-6 backdrop-blur-sm shadow-lg hover:shadow-sky-500/10 transition-all duration-300">
-                <div className="mb-6 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-500/20 border border-sky-500/30">
-                    <svg className="h-5 w-5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-white">Pricing Agreement</h3>
-                    <p className="text-sm text-sky-200/80">Your bank&apos;s pricing schedule</p>
-                  </div>
-                  <span className="rounded-full bg-sky-500/20 px-3 py-1 text-xs font-semibold text-sky-300 border border-sky-500/30">Required</span>
-                </div>
-                <p className="mb-4 text-sm text-slate-300">Select your bank pricing agreement</p>
-                <p className="mb-4 text-xs text-slate-400">Accepted files: PDF & CSV (max 16MB each)</p>
-                
-                {formData.company ? (
-                  <div className="space-y-4">
-                    {/* Bouton de sélection de fichiers */}
-                    <div className="flex items-center gap-4">
-                      <input
-                        ref={pricingInputRef}
-                        type="file"
-                        multiple
-                        accept=".pdf,.csv"
-                        onChange={(e) => handleFileSelect(e, 'pricing')}
-                        className="hidden"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => pricingInputRef.current?.click()}
-                        className="group flex items-center gap-2 rounded-xl border border-sky-500/30 bg-sky-500/10 px-6 py-3 text-sm font-semibold text-sky-300 transition-all hover:bg-sky-500/20 hover:border-sky-500/50"
-                      >
-                        <Upload className="h-4 w-4" />
-                        <span>Select Files</span>
-                      </button>
-                      
-                      {selectedPricing.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => uploadSelectedFiles('pricing')}
-                          disabled={isUploading}
-                          className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/25 transition-all hover:scale-105 hover:shadow-sky-500/40 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isUploading ? (
-                            <>
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              <span>Uploading... {uploadProgress}%</span>
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="h-4 w-4" />
-                              <span>Upload {selectedPricing.length} file{selectedPricing.length !== 1 ? 's' : ''}</span>
-                            </>
-                          )}
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Barre de progression */}
-                    {isUploading && (
-                      <div className="w-full rounded-full bg-white/10 p-1">
-                        <div 
-                          className="h-2 rounded-full bg-gradient-to-r from-sky-500 to-emerald-500 transition-all duration-300"
-                          style={{ width: `${uploadProgress}%` }}
-                        />
-                      </div>
-                    )}
-
-                    {/* Liste des fichiers sélectionnés */}
-                    {selectedPricing.length > 0 && (
-                      <div className="rounded-xl border border-sky-500/20 bg-sky-500/5 p-4">
-                        <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-sky-300">
-                          <Eye className="h-4 w-4" />
-                          Selected Files ({selectedPricing.length})
-                        </h4>
-                        <div className="space-y-2">
-                          {selectedPricing.map(file => (
-                            <div key={file.id} className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
-                              <File className="h-5 w-5 shrink-0 text-sky-400" />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-white truncate">{file.file.name}</p>
-                                <p className="text-xs text-slate-400">{formatFileSize(file.file.size)}</p>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => removeSelectedFile(file.id, 'pricing')}
-                                className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20 text-red-400 transition-all hover:bg-red-500/30"
-                              >
-                                <X className="h-4 w-4" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex h-32 flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/20 text-center">
-                    <svg className="mx-auto h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                    <p className="mt-2 text-sm text-slate-400">Enter company name first</p>
-                </div>
-              )}
-                
-                {/* Fichiers uploadés */}
-                {uploadedPricing.length > 0 && (
-                  <div className="mt-4 rounded-xl border border-sky-500/20 bg-sky-500/5 p-3">
-                    <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-sky-300">
-                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Uploaded Pricing Agreement ({uploadedPricing.length})
-                    </h4>
-                    <ul className="space-y-1">
-                      {uploadedPricing.map(file => (
-                        <li key={file.key} className="flex items-center gap-2 rounded-lg bg-white/5 p-2">
-                          <File className="h-4 w-4 shrink-0 text-sky-400" />
-                          <span className="flex-1 truncate text-xs text-slate-200">{file.name}</span>
-                          <span className="text-xs text-slate-400">{(file.size / 1024).toFixed(1)} KB</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              </div>
-
-              <div className="mt-8 flex justify-between">
-                <button
-                  type="button"
-                  onClick={prevStep}
-                  className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 text-white backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/30"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  <span>Previous</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={nextStep}
-                  disabled={!canProceedToStep4}
-                  className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-emerald-500 to-sky-500 px-8 py-4 text-lg font-bold text-white shadow-2xl shadow-emerald-500/30 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 hover:enabled:scale-105 hover:enabled:shadow-emerald-500/50 focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300"
-                >
                   <span>Next: Review & Submit</span>
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </button>
@@ -855,12 +661,12 @@ export default function UploadPage() {
             </div>
           )}
 
-          {/* Step 4: Review & Submit */}
-          {currentStep === 4 && (
+          {/* Step 3: Review & Submit */}
+          {currentStep === 3 && (
             <div className="rounded-3xl border border-white/20 bg-gradient-to-br from-white/10 via-white/5 to-white/10 p-8 backdrop-blur-xl shadow-2xl">
               <div className="mb-8 flex items-center gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-sky-500 text-xl font-bold text-white shadow-lg">
-                  4
+                  3
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-white">Review & Submit</h2>
@@ -946,24 +752,6 @@ export default function UploadPage() {
                         <span className="text-emerald-400 font-semibold">{uploadedStatements.length} file{uploadedStatements.length !== 1 ? 's' : ''}</span>
                         <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20">
                           <svg className="h-3 w-3 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between rounded-lg bg-white/5 p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/20">
-                          <svg className="h-4 w-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                        <span className="text-blue-200/70 font-medium">Pricing Agreement</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sky-400 font-semibold">{uploadedPricing.length} file{uploadedPricing.length !== 1 ? 's' : ''}</span>
-                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-500/20">
-                          <svg className="h-3 w-3 text-sky-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
                         </div>

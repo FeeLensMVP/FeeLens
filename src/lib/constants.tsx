@@ -8,7 +8,7 @@ export const NAV_LINKS = [
 export const FAQ_DATA = [
   {
     question: "How does the audit work?",
-    answer: "You securely upload your bank fee statements (up to 24 months) and your pricing agreement (PDF & CSV files). Our AI runs multiple checks to detect overcharges and pricing inconsistencies. Within 7 business days, you receive:\n\n• A CFO-ready savings summary report\n• A refund request email you can send directly to your bank.",
+    answer: "You securely upload your bank fee statements (up to 24 months) (PDF & CSV files). Our AI runs multiple checks to detect overcharges and pricing inconsistencies. Within 7 business days, you receive:\n\n• A CFO-ready savings summary report\n• A refund request email you can send directly to your bank.",
   },
   {
     question: "Is my data safe?",

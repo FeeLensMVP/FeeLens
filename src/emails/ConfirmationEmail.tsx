@@ -37,7 +37,7 @@ export const ConfirmationEmail = ({ name }: ConfirmationEmailProps) => {
                 <Heading style={heading}>Hi {firstName},</Heading>
                 
                 <Text style={paragraph}>
-                  Thank you for submitting your bank fee statements and pricing agreement. 
+                  Thank you for submitting your bank fee statements. 
                   We&apos;ve successfully received your documents and your audit is now underway.
                 </Text>
 
@@ -46,7 +46,7 @@ export const ConfirmationEmail = ({ name }: ConfirmationEmailProps) => {
                 </Text>
 
                 <Text style={paragraph}>
-                  • Our AI will analyze your bank fee statements and pricing agreement<br/>
+                  • Our AI will analyze your bank fee statements<br/>
                   • We&apos;ll identify potential overcharges and pricing inconsistencies<br/>
                   • You&apos;ll receive your detailed savings report within 7 business days
                 </Text>
