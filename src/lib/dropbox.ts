@@ -111,20 +111,44 @@ export class DropboxService {
         autorename: true,
       });
 
-      // Créer un lien partagé
-      const shareResponse = await dbx.sharingCreateSharedLinkWithSettings({
-        path: filePath,
-        settings: {
-          requested_visibility: { '.tag': 'public' },
-        },
-      });
+      // Créer un lien partagé (ou récupérer s'il existe déjà)
+      let shareUrl: string;
+      try {
+        const shareResponse = await dbx.sharingCreateSharedLinkWithSettings({
+          path: filePath,
+          settings: {
+            requested_visibility: { '.tag': 'public' },
+          },
+        });
+        shareUrl = shareResponse.result.url;
+      } catch (error: unknown) {
+        // Si le lien existe déjà (erreur 409), récupérer le lien existant
+        if (error && typeof error === 'object' && 'status' in error && error.status === 409) {
+          const existingLinks = await dbx.sharingListSharedLinks({
+            path: filePath,
+            direct_only: true,
+          });
+          if (existingLinks.result.links && existingLinks.result.links.length > 0) {
+            shareUrl = existingLinks.result.links[0].url;
+          } else {
+            // Si aucun lien n'est trouvé, essayer de créer un lien sans paramètres
+            const fallbackLink = await dbx.sharingCreateSharedLinkWithSettings({
+              path: filePath,
+            });
+            shareUrl = fallbackLink.result.url;
+          }
+        } else {
+          // Pour les autres erreurs, on propage l'erreur
+          throw error;
+        }
+      }
 
       return {
         id: response.result.id,
         name: fileName,
         path: filePath,
         size: response.result.size.toString(),
-        url: shareResponse.result.url,
+        url: shareUrl,
       };
     } catch (error) {
       console.error('Erreur upload Dropbox:', error);

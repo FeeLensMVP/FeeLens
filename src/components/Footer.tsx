@@ -54,14 +54,14 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="transition hover:text-emerald-400">
-                  FAQ
+                <Link href="/pricing" className="transition hover:text-emerald-400">
+                  Pricing
                 </Link>
               </li>
               <li>
-                <a href="#audit" className="transition hover:text-emerald-400">
-                  Request Audit
-                </a>
+                <Link href="/faq" className="transition hover:text-emerald-400">
+                  FAQ
+                </Link>
               </li>
             </ul>
           </div>
