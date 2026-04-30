@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function PricingPage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top,_#0A1F44_0%,_#071635_45%,_#0D2B6C_70%,_#0F2250_85%,_white_100%)] text-white">
+    <div className="relative min-h-screen overflow-x-clip bg-[radial-gradient(circle_at_top,_#0A1F44_0%,_#071635_45%,_#0D2B6C_70%,_#0F2250_85%,_white_100%)] text-white">
       <PageBackground />
       
       <Header />
